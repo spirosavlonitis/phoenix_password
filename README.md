@@ -24,9 +24,9 @@ Or install it yourself as:
 In order to generate combinations simply add the minimum or the required options
 here is an irb example:
 
+```ruby
 irb(main):001:0> require 'phoenix_password'
 => true
-```ruby
 irb(main):002:0>  PhoenixPassword.combinations({:piped=>true,:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6],:type=>'matching'})
 ```
 001273
@@ -65,7 +65,7 @@ Set extra characters to be used one at a time if the initial characters,minimum 
 Note that when etxra_chars are used only combinations that include them will be written to file.
 	
 ```ruby
-:type=>("mathing" or "unique")
+:type=>("matching" or "unique")
 ```
 Sets which type of combinations to be generated.
 Matching: Characters repeating them selves any number of times xx or xxx
