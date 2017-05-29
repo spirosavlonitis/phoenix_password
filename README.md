@@ -27,6 +27,7 @@ here is an irb example:
 irb(main):001:0> require 'phoenix_password'
 => true
 irb(main):002:0>  PhoenixPassword.combinations({:piped=>true,:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6],:type=>'matching'})
+
 001273
 001274
 001275
@@ -38,23 +39,28 @@ irb(main):002:0>  PhoenixPassword.combinations({:piped=>true,:characters=>[0,1,2
 This is a list of the options available to you and what they do
 		
 :piped=>(true or false)
+
 Lets you decide whether you want to pipe the results to an other program
 or write them to a file.
 
 :cmb_length=>([5] or [5,6])
+
 Set the length of the possible combinations to be generated if
 there is more than one value first all the combinations with the
 starting value are generated and then once done combinations of
 the following length are generated till all the values have been used.
 
 :characters=>["e","x","m","p","l","e",1]
+
 Sets the characters that will be used in the combination generation process.
 
 :extra_chars=>["x",1](Optional)
+
 Set extra characters to be used one at a time if the initial characters,minimum value 1 char.
 Note that when etxra_chars are used only combinations that include them will be written to file.
 	
 :type=>("mathing" or "unique")
+
 Sets which type of combinations to be generated.
 Matching: Characters repeating them selves any number of times xx or xxx
 Unique:Characters are different in every position xz or xzx
