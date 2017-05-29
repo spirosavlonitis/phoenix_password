@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{PhoenixPassword is an all purpose password genrator.}
   spec.description   = %q{Phoenix password generator provides you with several options for generating passwords, which characters are to be used,combination length,character uniqueness etc.}
-  spec.homepage      = ""
+  spec.homepage      = "https://github.com/spirosavlonitis/phoenix_password"
   spec.license       = "MIT"
 
 
