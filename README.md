@@ -35,10 +35,11 @@ irb(main):001:0> require 'phoenix_password'
 irb(main):002:0>  PhoenixPassword.combinations({:piped=>true,:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6],:type=>'matching'})
 ```
 001273
+
 001274
+
 001275
-001276
-001277
+
 .....
 
 ## Manual
