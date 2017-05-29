@@ -1,8 +1,13 @@
 # PhoenixPassword
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/phoenix_password`. To experiment with that code, run `bin/console` for an interactive prompt.
+The PhoenixPassword generator gem is intended to be used 
+in password recovery operations or random password generation
+purposes.
 
-TODO: Delete this and the text above, and describe your gem
+It comes with a variety of tools to help you in accomplishing your
+task but do note that it has not been thoroughly tested. 
+
+*Caution is advised when using it.*
 
 ## Installation
 
@@ -75,9 +80,12 @@ Unique:Characters are different in every position xz or xzx
 :match_limit=> 2 (:optional)
 ```
 Set the max matching characters for each combination example:
+
 2 = xxabc, axxbc,abxxc,abcxx
+
 3 = xxxab, axxxb,abxxx
-Note that you can set the limit to 4 but file size info will
+
+Note that you can set the limit to more than 3 but file size info will
 not be accurate.
 
 ```ruby
@@ -93,8 +101,6 @@ want to continue from where you left off.
 If not set all possible unique combinations are generated i.e reappearing char xzx,single char xyz
 When set to repeat only reappearing character combinations are generated xzx
 When set to single only single character appearance combinations are generated xzy.
-
-
 
 
 ## Development
