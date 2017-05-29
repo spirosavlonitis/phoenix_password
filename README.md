@@ -67,12 +67,12 @@ Note that you can set the limit to 4 but file size info will
 not be accurate.
 
 
-:skip_first=>(true |false) (Optional)
+:skip_first=>(true |false) (Optional)\n
 Used with extra_chars allows you to skip the first iteration with the
 main characters thus starting from the extra characters.Useful if you
 want to continue from where you left off.
 
-:uniqueness_type=>("repeat"|"singe") (Optional)
+:uniqueness_type=>("repeat"|"singe") (Optional)\n
 If not set all possible unique combinations are generated i.e reappearing char xzx,single char xyz
 When set to repeat only reappearing character combinations are generated xzx
 When set to single only single character appearance combinations are generated xzy.
