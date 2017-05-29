@@ -4,11 +4,6 @@ The PhoenixPassword generator gem is intended to be used
 in password recovery operations or random password generation
 purposes.
 
-It comes with a variety of tools to help you in accomplishing your
-task but do note that it has not been thoroughly tested. 
-
-*Caution is advised when using it.*
-
 ## Installation
 
 Add this line to your application's Gemfile:
