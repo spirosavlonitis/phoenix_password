@@ -60,6 +60,7 @@ Matching: Characters repeating them selves any number of times xx or xxx
 Unique:Characters are different in every position xz or xzx
 
 :match_limit=> 2 (:optional)
+
 Set the max matching characters for each combination example:
 2 = xxabc, axxbc,abxxc,abcxx
 3 = xxxab, axxxb,abxxx
@@ -67,12 +68,14 @@ Note that you can set the limit to 4 but file size info will
 not be accurate.
 
 
-:skip_first=>(true |false) (Optional)\n
+:skip_first=>(true |false) (Optional)
+
 Used with extra_chars allows you to skip the first iteration with the
 main characters thus starting from the extra characters.Useful if you
 want to continue from where you left off.
 
-:uniqueness_type=>("repeat"|"singe") (Optional)\n
+:uniqueness_type=>("repeat"|"singe") (Optional)
+
 If not set all possible unique combinations are generated i.e reappearing char xzx,single char xyz
 When set to repeat only reappearing character combinations are generated xzx
 When set to single only single character appearance combinations are generated xzy.
