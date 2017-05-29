@@ -38,9 +38,9 @@ irb(main):002:0>  PhoenixPassword.combinations({:piped=>true,:characters=>[0,1,2
 ## Manual
 This is a list of the options available to you and what they do
 
-'''ruby	
+```ruby	
 :piped=>(true or false)
-'''
+```
 Lets you decide whether you want to pipe the results to an other program
 or write them to a file.
 
