@@ -54,7 +54,7 @@ the following length are generated till all the values have been used.
 
 Sets the characters that will be used in the combination generation process.
 
-:extra_chars=>["x",1](Optional)
+:extra_chars=>["x",1] (Optional)
 
 Set extra characters to be used one at a time if the initial characters,minimum value 1 char.
 Note that when etxra_chars are used only combinations that include them will be written to file.
