@@ -176,7 +176,7 @@ class PhoenixPassword
 		unless unique_file.nil?
 			unique_file.close
 		end
-		puts unique_combs
+
 		return unique_combs
 	end
 
