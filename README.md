@@ -21,7 +21,7 @@ Or install it yourself as:
     $ gem install phoenix_password
 
 ## Usage
-In order to generate combinations simply add the minimum or the required options
+In order to generate combinations simply add the minimum of the required options
 here is an irb example:
 
 ```ruby
