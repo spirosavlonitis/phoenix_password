@@ -8,6 +8,9 @@
 /spec/reports/
 /tmp/
 /*.gem
+/.travis.yml
+/bin
+/*.gemspec
 
 # rspec failure tracking
 .rspec_status
