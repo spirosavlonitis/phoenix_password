@@ -87,22 +87,24 @@ class PhoenixPassword
 		
 		matching=0
 		begin
-		generate_combinations(data) do |combination;i|
-			if matching_check({:combination=>combination,:match_limit=>info[:match_limit]})
-				if info[:piped]
-					puts combination
-				elsif !matching_file.nil?
-					if data[:extra_chars].nil?
-						matching_file.puts(combination)
-					elsif data[:iteration] >= 1
-						matching_file.puts(combination)
+			generate_combinations(data) do |combination;i|
+				if matching_check({:combination=>combination,:match_limit=>info[:match_limit]})
+					if info[:piped]
+						puts combination
+					elsif !matching_file.nil?
+						if data[:extra_chars].nil?
+							matching_file.puts(combination)
+						elsif data[:iteration] >= 1
+							matching_file.puts(combination)
+						end
 					end
+					matching +=1
 				end
-				matching +=1
 			end
-		end
 			data[:iteration]+=1 unless data[:iteration].nil?
 			char_sum +=1
+		rescue => e
+			raise
 	    end while char_sum <= total_characters
 		matching_file.close unless matching_file.nil?
 		return matching
@@ -171,6 +173,8 @@ class PhoenixPassword
 			end
 			data[:iteration] +=1 if !data[:iteration].nil?
 			char_sum +=1
+		rescue => e
+			raise
 		end while char_sum <= total_characters
 		
 		unless unique_file.nil?
