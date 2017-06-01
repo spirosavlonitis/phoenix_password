@@ -12,7 +12,7 @@ class PhoenixPassword
 		possible_combinations=characters.length**combination_length
 		chars_used=Array.new(data[:cmb_length],0)
 		
-		while i < possible_combinations
+		while i < possible_combinations/characters.length
 			x=1
 			change_count=1
 			while x < combination_length
@@ -35,7 +35,19 @@ class PhoenixPassword
 			end
 
 			if data[:extra_chars].nil? || data[:iteration] == 0
-				yield(combination.join())
+				combinations=[]
+				combinations.<<(combination.join())
+				if combination.last != characters.first
+					reverse_comb=combination.reverse
+					combinations.<<(reverse_comb.join())
+					reverse_comb.pop
+					reverse_comb=reverse_comb.join()
+					characters.each do |char|
+						next if char == characters.first
+						combinations.<<("%s%s"%[reverse_comb,char])
+					end
+				end
+				yield(combinations)
 			else
  			  yield(combination.join()) if combination.include?(characters.last)
 			end
@@ -87,20 +99,22 @@ class PhoenixPassword
 		
 		matching=0
 		begin
-			generate_combinations(data) do |combination;i|
-				if matching_check({:combination=>combination,:match_limit=>info[:match_limit]})
-					if info[:piped]
-						puts combination
-					elsif !matching_file.nil?
-						if data[:extra_chars].nil?
-							matching_file.puts(combination)
-						elsif data[:iteration] >= 1
-							matching_file.puts(combination)
-						end
-					end
-					matching +=1
+		 generate_combinations(data) do |combinations|
+		  combinations.each do |combination|
+			if matching_check({:combination=>combination,:match_limit=>info[:match_limit]})
+			 if info[:piped]
+					puts combination
+			 elsif !matching_file.nil?
+			 	if data[:extra_chars].nil?
+						matching_file.puts(combination)
+				elsif data[:iteration] >= 1
+					matching_file.puts(combination)
 				end
+			 end
+			 matching +=1
 			end
+		  end
+		 end
 			data[:iteration]+=1 unless data[:iteration].nil?
 			char_sum +=1
 		rescue => e
@@ -155,24 +169,26 @@ class PhoenixPassword
 	   unique_combs=0
 	   uniqueness=info[:uniqueness_type]
 	   begin
-			generate_combinations(data) do |combination|
-				unique_chars=check_uniqueness(combination,uniqueness)
-				if unique_chars == combination.length-1
-					puts combination if info[:piped]
-					unless unique_file.nil?
-					  unless data[:extra_chars].nil?
-					  	if data[:iteration] != 0
-					  	  unique_file.puts(combination)
-					  	end
-					  else	
-						 unique_file.puts(combination)
-					  end
-					end
-					unique_combs= unique_combs+1
-				end
-			end
-			data[:iteration] +=1 if !data[:iteration].nil?
-			char_sum +=1
+		generate_combinations(data) do |combinations|
+		  combinations.each do |combination|
+			 unique_chars=check_uniqueness(combination,uniqueness)
+		 	 if unique_chars == combination.length-1
+				puts combination if info[:piped]
+			  	 unless unique_file.nil?
+				   unless data[:extra_chars].nil?
+				   	if data[:iteration] != 0
+				   	  unique_file.puts(combination)
+				  	end
+				  else	
+					 unique_file.puts(combination)
+				  end
+			 end
+			 unique_combs= unique_combs+1
+		   end
+		  end
+		end
+		data[:iteration] +=1 if !data[:iteration].nil?
+		char_sum +=1
 		rescue => e
 			raise
 		end while char_sum <= total_characters
