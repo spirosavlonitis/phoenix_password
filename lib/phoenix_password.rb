@@ -115,15 +115,11 @@ class PhoenixPassword
 		 generate_combinations(data) do |combinations|
 		  combinations.each do |combination|
 			if matching_check({:combination=>combination,:match_limit=>info[:match_limit]})
-			 if info[:piped]
-					puts combination
-			 elsif !matching_file.nil?
-			 	if data[:extra_chars].nil?
-						matching_file.puts(combination)
-				elsif data[:iteration] >= 1
+				 if info[:piped]
+						puts combination
+				 else
 					matching_file.puts(combination)
-				end
-			 end
+				 end
 			 matching +=1
 			end
 		  end
@@ -186,18 +182,13 @@ class PhoenixPassword
 		  combinations.each do |combination|
 			 unique_chars=check_uniqueness(combination,uniqueness)
 		 	 if unique_chars == combination.length-1
-				puts combination if info[:piped]
-			  	 unless unique_file.nil?
-				   unless data[:extra_chars].nil?
-				   	if data[:iteration] != 0
-				   	  unique_file.puts(combination)
-				  	end
-				  else	
-					 unique_file.puts(combination)
-				  end
+				if info[:piped]
+				  puts combination 
+				else	
+				  unique_file.puts(combination)
+				end
+			    unique_combs= unique_combs+1
 			 end
-			 unique_combs= unique_combs+1
-		   end
 		  end
 		end
 		data[:iteration] +=1 if !data[:iteration].nil?
