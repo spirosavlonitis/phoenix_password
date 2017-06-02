@@ -353,7 +353,7 @@ class PhoenixPassword
 
 		previous_matches=0
 		previous_mult=0
-		i=0
+		i=1
 		while i < (data[:cmb_length] -1)
 			if i == (data[:match_limit]-1)
 				previous_matches=base
@@ -364,7 +364,7 @@ class PhoenixPassword
 			else
 				temp_mult=previous_matches
 				previous_matches=(base**(i-1))+(previous_mult*(base-1))+(previous_matches*(base-1))
-				previous_mult=temp_mult*(base-1)
+				previous_mult=temp_mult
 
 			end
 			i+=1
