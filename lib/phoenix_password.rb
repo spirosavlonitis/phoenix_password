@@ -408,7 +408,6 @@ class PhoenixPassword
 					  cap_matches +=(get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})*base)*2
 				    end
 				elsif  i+1 == (data[:cmb_length]/2.0).ceil
-				   	half_point=(data[:cmb_length]-1)/2
 					if data[:cmb_length]%2 == 0
 					  x=((data[:cmb_length]-1)/2.0).floor
 					  y=((data[:cmb_length]-1)/2.0).ceil
@@ -416,11 +415,13 @@ class PhoenixPassword
 				      	 big_half=get_combinations({:characters=>cap_data[:characters],:cmb_length=>y})*base**x
 				      	 sml_half=base*(base**y)
 				      	 cap_matches +=(big_half+sml_half)*2-(get_combinations({:characters=>cap_data[:characters],:cmb_length=>y})*base)*2
-				    	 puts (big_half+sml_half)*2
 				      end
 					else
-				      cap_matches +=(base*base**half_point*2)-base**half_point if data[:cmb_length] == 5
-					  
+				   	  half_point=(data[:cmb_length]-1)/2
+				      if data[:cmb_length] == 5
+				        cap_matches +=(base*base**half_point*2)-base**half_point 
+					  end
+
 					end
 				else
 
@@ -583,4 +584,4 @@ class PhoenixPassword
 end
 
 PhoenixPassword.combinations({:type=>'matching',:piped=>false,
-:cap_limit=>1,:cmb_length=>[6],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
+:cmb_length=>[6],:characters=>[0,1,2,3,4,5,6,7,8]})
