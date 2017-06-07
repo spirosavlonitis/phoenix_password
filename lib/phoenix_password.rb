@@ -114,7 +114,7 @@ class PhoenixPassword
 		begin
 		 generate_combinations(data) do |combinations|
 		  combinations.each do |combination|
-			if matching_check({:combination=>combination,:match_limit=>info[:match_limit]})
+			if matching_check({:combination=>combination,:match_limit=>info[:match_limit],:cap_limit=>info[:cap_limit]})
 				 if info[:piped]
 						puts combination
 				 else
@@ -135,6 +135,10 @@ class PhoenixPassword
 
 	def self.matching_check(info)
 		combination=info[:combination]
+		if info[:cap_limit]
+		  caps=combination.scan(/[A-Z]/)
+		  return false if caps.length == 0 || caps.length > info[:cap_limit]
+		end
 		i=0
 		x=0
 		u=0
@@ -287,7 +291,6 @@ class PhoenixPassword
 			old_matches=old_base*post_matches
 			base=data[:characters].length+data[:extra_chars].length
 		end
-		possible_combinations=base**data[:cmb_length]
 		previous_matches=0
 		i=0
 
@@ -304,6 +307,7 @@ class PhoenixPassword
 		matches=base*previous_matches
 
 		if data[:type]=='unique'
+		    possible_combinations=base**data[:cmb_length]
 			if data[:uniqueness_type].nil?
 			   return (possible_combinations-matches)-(old_combinations-old_matches) if !data[:extra_chars].nil?
 			   return possible_combinations-matches
@@ -378,6 +382,62 @@ class PhoenixPassword
 		end
 	end
 
+	def self.cap_limit_matching(data)
+		cap_data={}
+		if data[:extra_chars].nil?			
+			total_chars=data[:characters].join()
+			caps_matched= total_chars.scan(/[A-Z]/)
+			cap_data[:characters]=[]
+			data[:characters].each do |char|
+				next if caps_matched.include?(char)
+				cap_data[:characters].push(char)
+			end
+			cap_matches=0
+			base=cap_data[:characters].length
+			return (base * caps_matched.length)*2 if data[:cmb_length] == 3
+			i=0
+			while i < (data[:cmb_length] - 2)
+				if i == 0
+					puts get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1)*2
+					cap_matches +=get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1)*2
+				elsif i == 1
+					puts (get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})*base)*2
+				    if data[:cmb_length] == 4
+				    	cap_matches +=(base**2)*2
+				    else
+					  cap_matches +=(get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})*base)*2
+				    end
+				elsif  i+1 == (data[:cmb_length]/2.0).ceil
+				   	half_point=(data[:cmb_length]-1)/2
+					if data[:cmb_length]%2 == 0
+					  x=((data[:cmb_length]-1)/2.0).floor
+					  y=((data[:cmb_length]-1)/2.0).ceil
+				      if data[:cmb_length] == 6
+				      	 big_half=get_combinations({:characters=>cap_data[:characters],:cmb_length=>y})*base**x
+				      	 sml_half=base*(base**y)
+				      	 cap_matches +=(big_half+sml_half)*2-(get_combinations({:characters=>cap_data[:characters],:cmb_length=>y})*base)*2
+				    	 puts (big_half+sml_half)*2
+				      end
+					else
+				      cap_matches +=(base*base**half_point*2)-base**half_point if data[:cmb_length] == 5
+					  
+					end
+				else
+
+				end
+				i+=1
+			end
+			puts cap_matches
+			return cap_matches
+		end
+	end
+
+	def self.cap_limit_combs(data)
+		if data[:type] == "matching"
+			cap_limit_matching(data)
+		end
+	end
+
 	def self.get_size(data)
 		bytes=data[:combinations]*(data[:cmb_length]+1)
 		kilo_bytes=bytes/1000.0
@@ -394,7 +454,7 @@ class PhoenixPassword
 			end
 			return_sizes[key]=value if value > 0.01 && key != :bytes
 		end
-		yield(return_sizes)
+		yield(return_sizes) if block_given?
 		return return_sizes
 	end
 
@@ -426,10 +486,12 @@ class PhoenixPassword
 		if data[:file_append].nil? || !data[:file_append]
 			if data[:write_cmbs].nil?
 				poss_combs=get_combinations(data)
-				unless data[:match_limit].nil?
-					poss_combs -= get_above_limit(data)
+				if !data[:match_limit].nil? 
+				  poss_combs -= get_above_limit(data)	
+				elsif !data[:cap_limit].nil?
+			      poss_combs=cap_limit_combs(data)
 				end
-				matching_file_size=get_size({:cmb_length=>data[:cmb_length],:combinations=>poss_combs}){}
+				matching_file_size=get_size({:cmb_length=>data[:cmb_length],:combinations=>poss_combs})
 			else
 				poss_combs=0
 				matching_file_size={:bytes=>0,:kilo=>0,:mega=>0,:giga=>0,:tera=>0,:peta=>0}
@@ -519,3 +581,6 @@ class PhoenixPassword
 		end
 	end
 end
+
+PhoenixPassword.combinations({:type=>'matching',:piped=>false,
+:cap_limit=>1,:cmb_length=>[6],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
