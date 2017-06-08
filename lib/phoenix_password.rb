@@ -398,20 +398,65 @@ class PhoenixPassword
 			  when 3
 				cap_matches += base*2
 			  when 4
-			  	cap_matches+=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1})*2
-			  	cap_matches+=(base**2)*2
+				  	cap_matches+=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1})*2
+				  	cap_matches+=(base**2)*2
 			  else
 			  	cap_matches+=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1})*2			  	
 			  	cap_matches+=(get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})*base)*(data[:cmb_length]-2)
 			end
-			
+
+			return cap_matches*caps_matched.length
+		end
+	end
+
+	def self.cap_limit_matching_l(data)
+		cap_data={}
+		if data[:extra_chars].nil?			
+			total_chars=data[:characters].join()
+			caps_matched= total_chars.scan(/[A-Z]/)
+			cap_data[:characters]=[]
+			data[:characters].each do |char|
+				next if caps_matched.include?(char)
+				cap_data[:characters].push(char)
+			end
+			base=cap_data[:characters].length
+			cap_matches=0
+			no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1})
+			case data[:cmb_length]
+			  when 3
+				cap_matches += base*2
+			  when 4
+				 cap_matches+=(no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:match_limit=>data[:match_limit]}))*2
+				 cap_matches+=(base**2)*2
+				 puts cap_matches
+			  	 exit
+			  else
+			  	cap_matches+=(no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:match_limit=>data[:match_limit]}))*2
+			  	no_limit_matches_b=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})
+			  	cap_matches+=((no_limit_matches_b-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2,:match_limit=>data[:match_limit]}))*base)*2
+				case data[:cmb_length]
+				when 5
+					cap_matches +=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})*base
+				when 6
+					grt_half_no_limit=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-3})
+					grt_half_limit =grt_half_no_limit-get_above_limit({:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-3})
+					cap_matches +=(((grt_half_limit*base**2)+(base*base**3))-(grt_half_no_limit*base))*2
+
+				end
+			  
+			end
+
 			return cap_matches*caps_matched.length
 		end
 	end
 
 	def self.cap_limit_combs(data)
 		if data[:type] == "matching"
-			cap_limit_matching(data)
+			if !data[:match_limit].nil?
+				cap_limit_matching_l(data)
+			else
+			   cap_limit_matching(data)			
+			end
 		end
 	end
 
@@ -463,8 +508,12 @@ class PhoenixPassword
 		if data[:file_append].nil? || !data[:file_append]
 			if data[:write_cmbs].nil?
 				poss_combs=get_combinations(data)
-				if !data[:match_limit].nil? 
-				  poss_combs -= get_above_limit(data)	
+				if !data[:match_limit].nil?
+					if !data[:cap_limit].nil?
+						poss_combs=cap_limit_combs(data)
+					else
+				  		poss_combs -= get_above_limit(data)
+					end
 				elsif !data[:cap_limit].nil?
 			      poss_combs=cap_limit_combs(data)
 				end
@@ -560,4 +609,4 @@ class PhoenixPassword
 end
 
 PhoenixPassword.combinations({:type=>'matching',:piped=>false,
-:cap_limit=>1,:cmb_length=>[8],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
+:cap_limit=>1,:match_limit=>2,:cmb_length=>[6],:characters=>[0,1,2,3,4,5,6,7,8,9,"A"]})
