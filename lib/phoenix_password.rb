@@ -33,11 +33,14 @@ class PhoenixPassword
 				combination[y]=characters[chars_used[y]]
 				y+=1
 			end
-
+			puts data[:type]
+			exit
 			combinations=[]
 			if data[:extra_chars].nil? || data[:iteration] == 0
-				combinations.<<(combination.join())
-				if combination.last != characters.first
+				
+				if(matching_check(combination.join) && data[:type] == "matching")
+				 combinations.<<(combination.join())
+				 if combination.last != characters.first
 					reverse_comb=combination.reverse
 					combinations.<<(reverse_comb.join())
 					reverse_comb.pop
@@ -45,8 +48,10 @@ class PhoenixPassword
 					characters.each do |char|
 						next if char == characters.first
 						combinations.<<("%s%s"%[reverse_comb,char])
-					end
+					 end
+				 end
 				end
+
 			else
  			  	combinations << combination.join() if combination.include?(characters.last)
 				if combination.last != characters.first
@@ -672,5 +677,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.combinations({:type=>'matching',:piped=>false,
+PhoenixPassword.combinations({:type=>'matching',:piped=>true,
 :cmb_length=>[6],:characters=>[0,1,2,3,4,5,6,7,8,9]})
