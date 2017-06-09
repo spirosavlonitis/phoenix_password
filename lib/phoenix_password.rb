@@ -429,9 +429,12 @@ class PhoenixPassword
 				 cap_matches+=(no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:match_limit=>data[:match_limit]}))*2
 				 cap_matches+=(base**2)*2
 			  else
-			  	cap_matches+=(no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:match_limit=>data[:match_limit]}))*2
+
+			  	#XXA
+			  	#cap_matches+=(no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:match_limit=>data[:match_limit]}))*2
 			  	no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})
-			  	cap_matches+=((no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2,:match_limit=>data[:match_limit]}))*base)*2
+			  	#XAX
+			  	#cap_matches+=((no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2,:match_limit=>data[:match_limit]}))*base)*2
 			  	x=data[:cmb_length]-4
 			  	if x == 1
 					cap_matches +=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})*base
@@ -440,16 +443,36 @@ class PhoenixPassword
 					grt_half_limit =grt_half_no_limit-get_above_limit({:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-3})
 					cap_matches +=(((grt_half_limit*base**2)+(base*base**3))-(grt_half_no_limit*base))*2
 			  	else
-					grt_half_no_limit=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-3})
-					grt_half_limit =grt_half_no_limit-get_above_limit({:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-3})
-					cap_matches +=(((grt_half_limit*base**2)+(base*base**(x+1)))-(grt_half_no_limit*base))*2
+			  		#AXX
+					i=3
+					p=0
+					l=0
+					puts (data[:cmb_length]/2.0).ceil
+					begin
+						grt_half_no_limit=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-(3+l)})
+						grt_half_limit =grt_half_no_limit-get_above_limit({:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-(3+l)})
+						if i == 3
+							cap_matches +=((grt_half_limit*((base**2)-base))+(base*base**(x+1)))*2
+						  	puts cap_matches
+						  	exit
+						else
+							lsr_half=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-(i-1)})
+							lsr_half_limit=lsr_half-get_above_limit(:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-(i-1))
+							cap_matches +=(((grt_half_limit*base**(2+p))+(lsr_half_limit*base**(x+1-p)))-(grt_half_no_limit*lsr_half))*2
+						end
+						p+=1
+						l+=1
+						i+=1
+					end while i < (data[:cmb_length]/2.0).ceil
+
+
 
 					if x%2 == 1
 						no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>x})
 						above_two=(((no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>x,:match_limit=>data[:match_limit]})))*base**x)*2
 						cap_matches+=above_two-(above_two/base)
 					else
-						no_limit_matches_a=get_combinations({:characters=>cap_data[:characters],:cmb_length=>x})						
+						no_limit_matches_a=get_combinations({:characters=>cap_data[:characters],:cmb_length=>x})
 						greater_half=(((no_limit_matches_a-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>x,:match_limit=>data[:match_limit]})))*base**(x-1))
 						no_limit_matches_b=get_combinations({:characters=>cap_data[:characters],:cmb_length=>(x-1)})
 						lesser_half=(((no_limit_matches_b-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>(x-1),:match_limit=>data[:match_limit]})))*base**x)
@@ -625,4 +648,4 @@ class PhoenixPassword
 end
 
 PhoenixPassword.combinations({:type=>'matching',:piped=>false,
-:cap_limit=>1,:match_limit=>2,:cmb_length=>[8],:characters=>[0,1,2,3,4,5,6,7,8,9,"A"]})
+:cap_limit=>1,:match_limit=>2,:cmb_length=>[9],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
