@@ -480,10 +480,7 @@ class PhoenixPassword
 							half_no_limit_b=get_combinations(:characters=>cap_data[:characters],:cmb_length=>x-2)
 
 							if data[:cmb_length] >= 13 
-								puts "!------Approximately less  than------!"
-							else
-								puts "!------Approximately more  than------!"
-								
+								puts "!------Approximately less  than------!"							
 							end
 							cap_matches+=half_point-((half_point/base))
 							
@@ -499,8 +496,6 @@ class PhoenixPassword
 							puts "!------Approximately less  than------!"
 						elsif data[:cmb_length] == 12
 							puts "!------Approximately more  than------!"
-						elsif data[:cmb_length] >=14
-							puts "!!!----Inaccurate information----!!!"
 						end
 						cap_matches+=((greater_half+lesser_half)-((no_limit_matches_a*no_limit_matches_b)-(no_limit_matches_b*base)))*2
 
@@ -509,6 +504,10 @@ class PhoenixPassword
 
 			  	end
 			  
+			end
+
+			if cap_data[:characters].length <= 2 || data[:cmb_length] > 13
+				puts "!!!----Inaccurate information----!!!"
 			end
 
 			return cap_matches*caps_matched.length
@@ -674,4 +673,4 @@ class PhoenixPassword
 end
 
 PhoenixPassword.combinations({:type=>'matching',:piped=>false,
-:cap_limit=>1,:match_limit=>2,:cmb_length=>[15],:characters=>[6,7,8,"A"]})
+:cmb_length=>[6],:characters=>[0,1,2,3,4,5,6,7,8,9]})
