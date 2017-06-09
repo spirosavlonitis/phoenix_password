@@ -449,16 +449,19 @@ class PhoenixPassword
 					l=0
 					puts (data[:cmb_length]/2.0).ceil
 					begin
-						grt_half_no_limit=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-(3+l)})
-						grt_half_limit =grt_half_no_limit-get_above_limit({:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-(3+l)})
+						grt_half=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-(3+l)})
+						grt_half_limit =grt_half-get_above_limit({:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-(3+l)})
 						if i == 3
-							cap_matches +=((grt_half_limit*((base**2)-base))+(base*base**(x+1)))*2
-						  	puts cap_matches
-						  	exit
+							if data[:cmb_length] <=8							
+ 								cap_matches +=(((grt_half_limit*base**2)+(base*base**(x+1)))-(grt_half*base))*2
+ 							else
+				#				cap_matches +=((grt_half_limit*((base**2)-base))+(base*base**(x+1)))*2
+							end
 						else
-							lsr_half=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-(i-1)})
-							lsr_half_limit=lsr_half-get_above_limit(:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-(i-1))
-							cap_matches +=(((grt_half_limit*base**(2+p))+(lsr_half_limit*base**(x+1-p)))-(grt_half_no_limit*lsr_half))*2
+							lsr_half=get_combinations({:characters=>cap_data[:characters],:cmb_length=>i-1})
+							lsr_half_limit=lsr_half-get_above_limit(:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>i-1)
+				#			cap_matches +=(((grt_half_limit*(base**(2+p)))+(lsr_half_limit*base**(x+1-p)))-(grt_half*lsr_half))*2
+						  	#9 not sure
 						end
 						p+=1
 						l+=1
@@ -468,9 +471,11 @@ class PhoenixPassword
 
 
 					if x%2 == 1
-						no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>x})
-						above_two=(((no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>x,:match_limit=>data[:match_limit]})))*base**x)*2
+						no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>x-(p-1)})
+						above_two=(((no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>x-(p-1),:match_limit=>data[:match_limit]})))*base**(x-(p-1)))*2
 						cap_matches+=above_two-(above_two/base)
+						puts cap_matches
+						exit
 					else
 						no_limit_matches_a=get_combinations({:characters=>cap_data[:characters],:cmb_length=>x})
 						greater_half=(((no_limit_matches_a-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>x,:match_limit=>data[:match_limit]})))*base**(x-1))
