@@ -537,7 +537,6 @@ class PhoenixPassword
 	end
 
 	def self.unique_cap_limit(data)
-
 		cap_data={}
 			if data[:extra_chars].nil?			
 				total_chars=data[:characters].join()
@@ -548,6 +547,12 @@ class PhoenixPassword
 					cap_data[:characters].push(char)
 				end
 				base=cap_data[:characters].length
+			end
+
+			if data[:uniqueness_type] == 'single'
+				return get_single_combs({:cmb_length=>data[:cmb_length]-1,:characters=>cap_data[:characters]})*caps_matched
+			elsif data[:uniqueness_type] == 'repeat'
+
 			end
 
 			case data[:cmb_length]
@@ -573,13 +578,8 @@ class PhoenixPassword
 			   cap_limit_matching(data)			
 			end
 		else
-			if data[:uniqueness_type] == 'single'
+			unique_cap_limit(data)
 			
-			elsif data[:uniqueness_type] == 'repeat'
-
-			else
-				unique_cap_limit(data)
-			end
 		end
 	end
 
@@ -732,4 +732,4 @@ class PhoenixPassword
 end
 
 PhoenixPassword.combinations({:type=>'unique',:piped=>false,
-:cap_limit=>1,:cmb_length=>[8],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
+:cap_limit=>1,:uniqueness_type=>'single',:cmb_length=>[6],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
