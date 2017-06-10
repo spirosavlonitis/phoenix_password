@@ -552,10 +552,14 @@ class PhoenixPassword
 
 			case data[:cmb_length]
 				when 3
-					return ((base**2))-(base*2)
+					return ((base**2))-(base*2)*caps_matched.length
 				when 4
 					previous_unique=get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:type=>"unique")
-					return (previous_unique*2)+(81*base)*2-(base*base)*2
+					return ((previous_unique*2)+((((base**2)-base)*base)*2)*caps_matched.length)
+				else
+					previous_unique_a=get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:type=>"unique")
+					previous_unique_b=get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2,:type=>"unique")
+					return (previous_unique_a*2)+((previous_unique_b*base)*(data[:cmb_length]-2))
 			end
 
 	end
@@ -565,7 +569,7 @@ class PhoenixPassword
 			if !data[:match_limit].nil?
 				cap_limit_matching_l(data)
 			else
-			   puts "Combinations and file size may vary when using match_limit"
+			   puts "Combinations and file size may vary when using match_limit" if data[:match_limit]
 			   cap_limit_matching(data)			
 			end
 		else
@@ -728,4 +732,4 @@ class PhoenixPassword
 end
 
 PhoenixPassword.combinations({:type=>'unique',:piped=>false,
-:cap_limit=>1,:cmb_length=>[4],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
+:cap_limit=>1,:cmb_length=>[8],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
