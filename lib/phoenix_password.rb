@@ -561,14 +561,14 @@ class PhoenixPassword
 	end
 
 	def self.cap_limit_combs(data)
-		if data[:type] == "matching" && !data[:piped]
+		if data[:type] == "matching"
 			if !data[:match_limit].nil?
 				cap_limit_matching_l(data)
 			else
 			   puts "Combinations and file size may vary when using match_limit"
 			   cap_limit_matching(data)			
 			end
-		elsif !data[:piped]
+		else
 			if data[:uniqueness_type] == 'single'
 			
 			elsif data[:uniqueness_type] == 'repeat'
