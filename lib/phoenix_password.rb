@@ -536,6 +536,10 @@ class PhoenixPassword
 		end
 	end
 
+	def self.get_cap_limit_single_combs(data)
+		
+	end
+
 	def self.unique_cap_limit(data)
 		cap_data={}
 			if data[:extra_chars].nil?			
@@ -549,24 +553,32 @@ class PhoenixPassword
 				base=cap_data[:characters].length
 			end
 
+			unique_cap_limit=0
 			if data[:uniqueness_type] == 'single'
-				return get_single_combs({:cmb_length=>data[:cmb_length]-1,:characters=>cap_data[:characters]})*caps_matched
+			  if data[:cmb_length] == 3
+				  unique_cap_limit=(((base**2)-(base))*3)
+			  else
+				  previous_unique=get_single_combs(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:type=>"unique")
+				  unique_cap_limit=previous_unique*data[:cmb_length]
+		   	  end
+	
 			elsif data[:uniqueness_type] == 'repeat'
 
+			else
+				case data[:cmb_length]
+					when 3
+						unique_cap_limit=((base**2)*3)-(base*2)
+					when 4
+						previous_unique=get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:type=>"unique")
+						unique_cap_limit=(previous_unique*2)+((((base**2)-base)*base)*2)
+					else
+						previous_unique_a=get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:type=>"unique")
+						previous_unique_b=get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2,:type=>"unique")
+						unique_cap_limit=(previous_unique_a*2)+((previous_unique_b*base)*(data[:cmb_length]-2))
+				end
 			end
 
-			case data[:cmb_length]
-				when 3
-					return ((base**2))-(base*2)*caps_matched.length
-				when 4
-					previous_unique=get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:type=>"unique")
-					return ((previous_unique*2)+((((base**2)-base)*base)*2)*caps_matched.length)
-				else
-					previous_unique_a=get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:type=>"unique")
-					previous_unique_b=get_combinations(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2,:type=>"unique")
-					return (previous_unique_a*2)+((previous_unique_b*base)*(data[:cmb_length]-2))
-			end
-
+			return unique_cap_limit*caps_matched.length
 	end
 
 	def self.cap_limit_combs(data)
@@ -732,4 +744,4 @@ class PhoenixPassword
 end
 
 PhoenixPassword.combinations({:type=>'unique',:piped=>false,
-:cap_limit=>1,:uniqueness_type=>'single',:cmb_length=>[6],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
+:cap_limit=>1,:uniqueness_type=>'single',:cmb_length=>[5],:characters=>[0,1,2,3,4,5,6,7,8,"A","B"]})
