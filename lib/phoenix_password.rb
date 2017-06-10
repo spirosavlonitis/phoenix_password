@@ -47,7 +47,7 @@ class PhoenixPassword
 		        check_match= matching_check({:combination=>reverse_comb,:match_limit=>data[:match_limit],:cap_limit=>data[:cap_limit]})
 				characters.each do |char|
 					next if char == characters.first
-					if char != reverse_compare.last && data[:type] == "unique"
+					if  data[:type] == "unique"
 						combinations.<<("%s%s"%[reverse_comb,char])
 					else
 						if check_match
@@ -692,5 +692,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.combinations({:type=>'unique',:piped=>false,
+PhoenixPassword.combinations({:type=>'matching',:piped=>false,
 :cmb_length=>[7],:characters=>[0,1,2,3,4,5,6,7,8,9]})
