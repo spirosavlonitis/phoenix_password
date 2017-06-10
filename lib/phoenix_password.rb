@@ -33,24 +33,35 @@ class PhoenixPassword
 				combination[y]=characters[chars_used[y]]
 				y+=1
 			end
-			puts data[:type]
-			exit
+
 			combinations=[]
 			if data[:extra_chars].nil? || data[:iteration] == 0
 				
-				if(matching_check(combination.join) && data[:type] == "matching")
-				 combinations.<<(combination.join())
-				 if combination.last != characters.first
-					reverse_comb=combination.reverse
-					combinations.<<(reverse_comb.join())
-					reverse_comb.pop
-					reverse_comb=reverse_comb.join()
+			 combinations.<<(combination.join())
+			 if combination.last != characters.first
+				reverse_comb=combination.reverse
+				combinations.<<(reverse_comb.join())
+				reverse_comb.pop
+				reverse_compare=reverse_comb
+				reverse_comb=reverse_comb.join()
+		        check_match= matching_check({:combination=>reverse_comb,:match_limit=>data[:match_limit],:cap_limit=>data[:cap_limit]})
+		        unique_check=check_uniqueness(reverse_comb,data[:uniqueness_type])
+		        if check_match && data[:type] == "matching" || unique_check == data[:cmb_length]-1 && data[:type] == "unique"
 					characters.each do |char|
 						next if char == characters.first
 						combinations.<<("%s%s"%[reverse_comb,char])
 					 end
-				 end
+				else
+					characters.each do |char|
+						next if char == characters.first
+						if data[:type] == "matching"
+						   combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
+						else
+							combinations.<<("%s%s"%[reverse_comb,char]) if char != reverse_compare.last
+						end
+					 end
 				end
+			 end
 
 			else
  			  	combinations << combination.join() if combination.include?(characters.last)
@@ -167,7 +178,7 @@ class PhoenixPassword
 	end
 
 	def self.unique_combinations(info)	 
-	   data={:characters=>info[:characters],:cmb_length=>info[:cmb_length],:type=>info[:type]}
+	   data={:characters=>info[:characters],:cmb_length=>info[:cmb_length],:type=>info[:type],:uniqueness_type=>info[:uniqueness_type]}
 	   unless info[:extra_chars].nil?
 	   		data[:extra_chars]=info[:extra_chars]
 	   end
@@ -677,5 +688,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.combinations({:type=>'matching',:piped=>true,
+PhoenixPassword.combinations({:type=>'unique',:piped=>false,
 :cmb_length=>[6],:characters=>[0,1,2,3,4,5,6,7,8,9]})
