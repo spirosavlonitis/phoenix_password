@@ -408,7 +408,6 @@ class PhoenixPassword
 
 	def self.cap_limit_matching(data)
 		cap_data={}
-		if data[:extra_chars].nil?			
 			total_chars=data[:characters].join()
 			caps_matched= total_chars.scan(/[A-Z]/)
 			cap_data[:characters]=[]
@@ -429,8 +428,14 @@ class PhoenixPassword
 			  	cap_matches+=(get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})*base)*(data[:cmb_length]-2)
 			end
 
-			return cap_matches*caps_matched.length
+		if !data[:extra_chars].nil?
+			all_chars=data[:characters]+data[:extra_chars]
+			new_cap_matches=cap_limit_matching({:cmb_length=>data[:cmb_length],:characters=>all_chars})
+			return	new_cap_matches-(cap_matches*caps_matched.length)
+		else
+  		  return cap_matches*caps_matched.length		
 		end
+
 	end
 
 	def self.cap_limit_matching_l(data)
@@ -757,5 +762,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.combinations({:type=>'unique',:piped=>false,
-:cap_limit=>1,:uniqueness_type=>'repeat',:cmb_length=>[5],:characters=>[0,1,2,3,4,5,6,7,8,"A","B"]})
+PhoenixPassword.combinations({:type=>'matching',:piped=>false,
+:cap_limit=>1,:extra_chars=>["B","c","D"],:cmb_length=>[3],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
