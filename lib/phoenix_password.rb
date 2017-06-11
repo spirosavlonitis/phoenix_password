@@ -439,110 +439,110 @@ class PhoenixPassword
 	end
 
 	def self.cap_limit_matching_l(data)
-		cap_data={}
-		if data[:extra_chars].nil?			
-			total_chars=data[:characters].join()
-			caps_matched= total_chars.scan(/[A-Z]/)
-			cap_data[:characters]=[]
-			data[:characters].each do |char|
-				next if caps_matched.include?(char)
-				cap_data[:characters].push(char)
-			end
-			base=cap_data[:characters].length
-			cap_matches=0
-			no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1})
-			case data[:cmb_length]
-			  when 3
-				cap_matches += base*2
-			  when 4
-				 cap_matches+=(no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:match_limit=>data[:match_limit]}))*2
-				 cap_matches+=(base**2)*2
-			  else
+		cap_data={}		
+		total_chars=data[:characters].join()
+		caps_matched= total_chars.scan(/[A-Z]/)
+		cap_data[:characters]=[]
+		data[:characters].each do |char|
+			next if caps_matched.include?(char)
+			cap_data[:characters].push(char)
+		end
+		base=cap_data[:characters].length
+		cap_matches=0
+		no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1})
+		case data[:cmb_length]
+		  when 3
+			cap_matches += base*2
+		  when 4
+			 cap_matches+=(no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:match_limit=>data[:match_limit]}))*2
+			 cap_matches+=(base**2)*2
+		  else
 
-			  	#XXA
-			  	cap_matches+=(no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:match_limit=>data[:match_limit]}))*2
-			  	no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})
-			  	#XAX
-			  	cap_matches+=((no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2,:match_limit=>data[:match_limit]}))*base)*2
-			  	x=data[:cmb_length]-4
-			  	if x == 1
-					cap_matches +=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})*base
-			  	elsif x == 2
-					grt_half_no_limit=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-3})
-					grt_half_limit =grt_half_no_limit-get_above_limit({:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-3})
-					cap_matches +=(((grt_half_limit*base**2)+(base*base**3))-(grt_half_no_limit*base))*2
-			  	else
-			  		#AXX
-					i=3
-					p=0
-					l=0
-					begin
-						grt_half=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-(3+l)})
-						grt_half_limit =grt_half-get_above_limit({:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-(3+l)})
-						if i == 3
-							if data[:cmb_length] <=8							
- 								cap_matches +=(((grt_half_limit*base**2)+(base*base**(x+1)))-(grt_half*base))*2
- 							else
-								cap_matches +=((grt_half_limit*((base**2)-base))+(base*base**(x+1)))*2
+		  	#XXA
+		  	cap_matches+=(no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:match_limit=>data[:match_limit]}))*2
+		  	no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})
+		  	#XAX
+		  	cap_matches+=((no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2,:match_limit=>data[:match_limit]}))*base)*2
+		  	x=data[:cmb_length]-4
+		  	if x == 1
+				cap_matches +=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-2})*base
+		  	elsif x == 2
+				grt_half_no_limit=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-3})
+				grt_half_limit =grt_half_no_limit-get_above_limit({:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-3})
+				cap_matches +=(((grt_half_limit*base**2)+(base*base**3))-(grt_half_no_limit*base))*2
+		  	else
+		  		#AXX
+				i=3
+				p=0
+				l=0
+				begin
+					grt_half=get_combinations({:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-(3+l)})
+					grt_half_limit =grt_half-get_above_limit({:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>data[:cmb_length]-(3+l)})
+					if i == 3
+						if data[:cmb_length] <=8							
+								cap_matches +=(((grt_half_limit*base**2)+(base*base**(x+1)))-(grt_half*base))*2
+							else
+							cap_matches +=((grt_half_limit*((base**2)-base))+(base*base**(x+1)))*2
 
-							end 
-						else
-							lsr_half=get_combinations({:characters=>cap_data[:characters],:cmb_length=>i-1})
-							lsr_half_limit=lsr_half-get_above_limit(:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>i-1)
-							cap_matches +=(((grt_half_limit*(base**(2+p)))+(lsr_half_limit*base**(x+1-p)))-(grt_half*lsr_half))*2
-						  	
-						end
-						p+=1
-						l+=1
-						i+=1
-					end while i < (data[:cmb_length]/2.0).ceil
-
-
-
-					if x%2 == 1
-						no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>x-(p-1)})
-						half_point=(((no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>x-(p-1),:match_limit=>data[:match_limit]})))*base**(x-(p-1)))*2
-						if data[:cmb_length] == 7
-	 				    	cap_matches+=half_point-((half_point/base))
-						else
-							half_no_limit=get_combinations(:characters=>cap_data[:characters],:cmb_length=>x-1)							
-							half_no_limit_b=get_combinations(:characters=>cap_data[:characters],:cmb_length=>x-2)
-
-							if data[:cmb_length] >= 9
-								puts "!------Approximately less  than------!"
-							end
-							cap_matches+=half_point-((half_point/base))
-							
-						end
-
+						end 
 					else
-						no_limit_matches_a=get_combinations({:characters=>cap_data[:characters],:cmb_length=>(x-l)+1})
-						greater_half=(((no_limit_matches_a-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>(x-l)+1,:match_limit=>data[:match_limit]})))*base**(x-l))
-						no_limit_matches_b=get_combinations({:characters=>cap_data[:characters],:cmb_length=>(x-l)})
-						lesser_half=(((no_limit_matches_b-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>(x-l),:match_limit=>data[:match_limit]})))*base**(x-l+1))
-						
-						if data[:cmb_length] == 10
+						lsr_half=get_combinations({:characters=>cap_data[:characters],:cmb_length=>i-1})
+						lsr_half_limit=lsr_half-get_above_limit(:characters=>cap_data[:characters],:match_limit=>data[:match_limit],:cmb_length=>i-1)
+						cap_matches +=(((grt_half_limit*(base**(2+p)))+(lsr_half_limit*base**(x+1-p)))-(grt_half*lsr_half))*2
+						  	
+					end
+					p+=1
+					l+=1
+					i+=1
+				end while i < (data[:cmb_length]/2.0).ceil
+
+
+
+				if x%2 == 1
+					no_limit_matches=get_combinations({:characters=>cap_data[:characters],:cmb_length=>x-(p-1)})
+					half_point=(((no_limit_matches-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>x-(p-1),:match_limit=>data[:match_limit]})))*base**(x-(p-1)))*2
+					if data[:cmb_length] == 7
+ 				    	cap_matches+=half_point-((half_point/base))
+					else
+						half_no_limit=get_combinations(:characters=>cap_data[:characters],:cmb_length=>x-1)							
+						half_no_limit_b=get_combinations(:characters=>cap_data[:characters],:cmb_length=>x-2)
+
+						if data[:cmb_length] >= 9
 							puts "!------Approximately less  than------!"
-						elsif data[:cmb_length] == 12
-							puts "!------Approximately more  than------!"
 						end
-						cap_matches+=((greater_half+lesser_half)-((no_limit_matches_a*no_limit_matches_b)-(no_limit_matches_b*base)))*2
+						cap_matches+=half_point-((half_point/base))
+						
 					end
 
-			  	end
- 			  
-			end
+				else
+					no_limit_matches_a=get_combinations({:characters=>cap_data[:characters],:cmb_length=>(x-l)+1})
+					greater_half=(((no_limit_matches_a-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>(x-l)+1,:match_limit=>data[:match_limit]})))*base**(x-l))
+					no_limit_matches_b=get_combinations({:characters=>cap_data[:characters],:cmb_length=>(x-l)})
+					lesser_half=(((no_limit_matches_b-get_above_limit({:characters=>cap_data[:characters],:cmb_length=>(x-l),:match_limit=>data[:match_limit]})))*base**(x-l+1))
+					
+					if data[:cmb_length] == 10
+						puts "!------Approximately less  than------!"
+					elsif data[:cmb_length] == 12
+						puts "!------Approximately more  than------!"
+					end
+					cap_matches+=((greater_half+lesser_half)-((no_limit_matches_a*no_limit_matches_b)-(no_limit_matches_b*base)))*2
+				end
 
-			if (cap_data[:characters].length <= 2 || data[:cmb_length] >= 13)
-				puts "!!!----Inaccurate information----!!!"
-			end
-
-			return cap_matches*caps_matched.length
+		  	end
+			  
 		end
-	end
 
-	def self.get_cap_limit_single_combs(data)
-		
+		if (cap_data[:characters].length <= 2 || data[:cmb_length] >= 13)
+			puts "!!!----Inaccurate information----!!!"
+		end
+
+		if !data[:extra_chars].nil?
+			all_chars=data[:characters]+data[:extra_chars]
+			new_cap_matches=cap_limit_matching_l({:cmb_length=>data[:cmb_length],:characters=>all_chars,:match_limit=>data[:match_limit]})
+			return	new_cap_matches-(cap_matches*caps_matched.length)
+		else
+    		return cap_matches*caps_matched.length		
+		end
 	end
 
 	def self.unique_cap_limit(data)
@@ -566,9 +566,6 @@ class PhoenixPassword
 				  previous_single=get_single_combs(:characters=>cap_data[:characters],:cmb_length=>data[:cmb_length]-1,:type=>"unique")
 				  unique_cap_limit=previous_single*data[:cmb_length]
 		   	  end
-	
-			#elsif data[:uniqueness_type] == 'repeat'
-
 			else
 				case data[:cmb_length]
 					when 3
@@ -763,4 +760,4 @@ class PhoenixPassword
 end
 
 PhoenixPassword.combinations({:type=>'matching',:piped=>false,
-:cap_limit=>1,:extra_chars=>["B","c","D"],:cmb_length=>[3],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
+:cap_limit=>1,:match_limit=>2,:extra_chars=>["B","c","D"],:cmb_length=>[3],:characters=>[0,1,2,3,4,5,6,7,8,"A"]})
