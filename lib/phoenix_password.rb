@@ -610,8 +610,7 @@ class PhoenixPassword
 			   cap_limit_matching(data)			
 			end
 		else
-			unique_cap_limit(data)
-			
+			unique_cap_limit(data)			
 		end
 	end
 
@@ -679,12 +678,17 @@ class PhoenixPassword
 				dataB=data.clone
 				data[:write_cmbs].each do |n|
 					dataB[:cmb_length]=n
+				  if data[:cap_limit].nil?
 					current_combs=get_combinations(dataB)
 					poss_combs +=current_combs
 				    unless data[:match_limit].nil?
 					     poss_combs -= get_above_limit(dataB)
 					     current_combs -= get_above_limit(dataB)
 				    end
+				  else
+				  	 current_combs=cap_limit_combs(dataB)
+				  	 poss_combs +=cap_limit_combs(dataB)
+				  end
 					get_size({:cmb_length=>n,:combinations=>current_combs})do |sizes|
 						sizes.each do |key,value|
 							matching_file_size[key] +=value
@@ -763,5 +767,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.combinations({:type=>'matching',:piped=>false,
-:cap_limit=>1,:match_limit=>2,:extra_chars=>["B","c","D"],:cmb_length=>[8],:characters=>[0,1,2,3,4,5,6,7,8,"A","g"]})
+PhoenixPassword.combinations({:type=>'unique',:piped=>false,
+:cap_limit=>1,:uniqueness_type=>'single',:extra_chars=>["B"],:cmb_length=>[5,6],:characters=>[0,1,2,3,4,5,6,7,8,"A","g"]})
