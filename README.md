@@ -102,10 +102,10 @@ When set to single only single character appearance combinations are generated x
 ```ruby
 :cap_limit=>1 or more (optional)
 
+```
 When used it ensures that each combination generated will contain only the amount of capital letters specified.
 *Note that file size and combination estimates  when using match_limit may not be accurate*
 
-```
 
 
 
