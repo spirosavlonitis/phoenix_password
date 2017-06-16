@@ -1,7 +1,7 @@
 require "phoenix_password/version"
 
 class PhoenixPassword
-	def self.generate_combinations(data)
+	def generate_combinations(data)
 		characters=data[:characters]
 		if !data[:extra_chars].nil?
 			characters.push(data[:extra_chars][data[:iteration]-1])  if data[:iteration] != 0
@@ -111,7 +111,7 @@ class PhoenixPassword
 		return characters
 	end
 	
-	def self.matching_combinations(info)
+	def matching_combinations(info)
 		data={:characters=>info[:characters],:cmb_length=>info[:cmb_length],:type=>info[:type]}
 	    unless info[:extra_chars].nil?
 	   	 	 data[:extra_chars]=info[:extra_chars]
@@ -153,7 +153,7 @@ class PhoenixPassword
 		return matching
 	end
 
-	def self.matching_check(info)
+	def matching_check(info)
 		combination=info[:combination]
 		if info[:cap_limit]
 		  caps=combination.scan(/[A-Z]/)
@@ -181,7 +181,7 @@ class PhoenixPassword
 		return true
 	end
 
-	def self.unique_combinations(info)
+	def unique_combinations(info)
 	   data={:characters=>info[:characters],:cmb_length=>info[:cmb_length],:type=>info[:type],:uniqueness_type=>info[:uniqueness_type]}
 	   unless info[:extra_chars].nil?
 	   		data[:extra_chars]=info[:extra_chars]
@@ -228,7 +228,7 @@ class PhoenixPassword
 		return unique_combs
 	end
 
-	def self.check_uniqueness(combination,uniqueness,cap_limit)
+	def check_uniqueness(combination,uniqueness,cap_limit)
 	    if cap_limit
 		  caps=combination.scan(/[A-Z]/)
 		  return 0 if caps.length == 0 || caps.length > cap_limit
@@ -275,7 +275,7 @@ class PhoenixPassword
 		return unique_chars
 	end
 
-	def self.get_single_combs(data)
+	def get_single_combs(data)
 		i=0
 		single_combinations=0
 		extra_singe=0
@@ -294,7 +294,7 @@ class PhoenixPassword
 		return single_combinations
 	end
 
-	def self.get_combinations(data)
+	def get_combinations(data)
 		if data[:extra_chars].nil?
 			base=data[:characters].length
 		else
@@ -351,7 +351,7 @@ class PhoenixPassword
 		return 0
 	end
 
-	def self.get_above_limit(data)
+	def get_above_limit(data)
 		if data[:extra_chars].nil?
 			base=data[:characters].length
 		else
@@ -406,7 +406,7 @@ class PhoenixPassword
 		end
 	end
 
-	def self.cap_limit_matching(data)
+	def cap_limit_matching(data)
 		cap_data={}
 			total_chars=data[:characters].join()
 			caps_matched= total_chars.scan(/[A-Z]/)
@@ -438,7 +438,7 @@ class PhoenixPassword
 
 	end
 
-	def self.cap_limit_matching_l(data)
+	def cap_limit_matching_l(data)
 		cap_data={}		
 		total_chars=data[:characters].join()
 		caps_matched= total_chars.scan(/[A-Z]/)
@@ -545,7 +545,7 @@ class PhoenixPassword
 		end
 	end
 
-	def self.unique_cap_limit(data)
+	def unique_cap_limit(data)
 		cap_data={}
 		total_chars=data[:characters].join()
 		caps_matched= total_chars.scan(/[A-Z]/)
@@ -601,7 +601,7 @@ class PhoenixPassword
 
 	end
 
-	def self.cap_limit_combs(data,x=0)
+	def cap_limit_combs(data,x=0)
 		if data[:type] == "matching"
 			if !data[:match_limit].nil?
 			   puts "Combinations and file size may vary when using match_limit" if x == 0
@@ -614,7 +614,7 @@ class PhoenixPassword
 		end
 	end
 
-	def self.get_size(data)
+	def get_size(data)
 		bytes=data[:combinations]*(data[:cmb_length]+1)
 		kilo_bytes=bytes/1000.0
 		mega_bytes=kilo_bytes/1000.0
@@ -635,7 +635,7 @@ class PhoenixPassword
 	end
 
 
-	def self.create_file(data)
+	def create_file(data)
 		    continue=file_info(data)
 			case continue
 			when /(y|Y)/
@@ -658,7 +658,7 @@ class PhoenixPassword
 			end	
 	end
 
-	def self.file_info(data)
+	def file_info(data)
 		if data[:file_append].nil? || !data[:file_append]
 			if data[:write_cmbs].nil?
 				poss_combs=get_combinations(data)
@@ -715,7 +715,7 @@ class PhoenixPassword
 		end
 	end
 
-	def self.multi_length_matching(data)
+	def multi_length_matching(data)
 		dataB=data.clone
 		i=0
 		while i < data[:cmb_length].length
@@ -726,7 +726,7 @@ class PhoenixPassword
 		end
 	end
 
-	def self.multi_length_unique(data)
+	def multi_length_unique(data)
 		dataB=data.clone
 		i=0
 		while i < data[:cmb_length].length
@@ -737,7 +737,7 @@ class PhoenixPassword
 		end
 	end
 
-	def self.combinations(data)
+	def combinations(data)
 		case data[:type]
 	  	 when "matching"
 	  	 	if data[:cmb_length].length == 1
@@ -768,3 +768,11 @@ class PhoenixPassword
 		end
 	end
 end
+
+
+
+
+phoenix=PhoenixPassword.new
+
+phoenix.combinations({:piped=>false,:type=>'matching',:cmb_length=>[7],
+:characters=>[0,1,2,3,4,5,6,7,8,9]})
