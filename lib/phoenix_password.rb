@@ -1,6 +1,13 @@
 require "phoenix_password/version"
+require_relative 'realistic'
 
 class PhoenixPassword
+	prepend Realistic
+
+	def initialize(rules=nil)
+		@rules=rules
+	end
+
 	def generate_combinations(data)
 		characters=data[:characters]
 		if !data[:extra_chars].nil?
@@ -34,55 +41,8 @@ class PhoenixPassword
 				y+=1
 			end
 
-			combinations=[]
-			if data[:extra_chars].nil? || data[:iteration] == 0
-				
-			 combinations.<<(combination.join())
-			 if combination.last != characters.first
-				reverse_comb=combination.reverse
-				combinations.<<(reverse_comb.join())
-				reverse_comb.pop
-				reverse_compare=reverse_comb
-				reverse_comb=reverse_comb.join()
-		        check_match= matching_check({:combination=>reverse_comb,:match_limit=>data[:match_limit],:cap_limit=>data[:cap_limit]})
-				characters.each do |char|
-					next if char == characters.first
-					if  data[:type] == "unique"
-						combinations.<<("%s%s"%[reverse_comb,char])
-					else
-						if check_match
-							combinations.<<("%s%s"%[reverse_comb,char])	
-						else							
-						  combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
-						end
-					end
-				end
-			 end
-
-			else
- 			  	combinations << combination.join() if combination.include?(characters.last)
-		     if combination.last != characters.first
-					reverse_comb=combination.reverse 
-				    reverse_comb.pop
-				    reverse_compare=reverse_comb
-				    reverse_comb=reverse_comb.join
-				if reverse_comb.include?(characters.last)
-		        	check_match= matching_check({:combination=>reverse_comb,:match_limit=>data[:match_limit],:cap_limit=>data[:cap_limit]}) if data[:type] == 'matching'
-					characters.each do |char|
-						if  data[:type] == "unique"
-							combinations.<<("%s%s"%[reverse_comb,char])
-						elsif check_match
-							combinations.<<("%s%s"%[reverse_comb,char])
-						else							
-						    combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
-						end
-					end
-				else						
-				  combinations.<<("%s%s"%[reverse_comb,characters.last])				
-				end
-			 end
-			end
-
+			combinations=add_combinations({:combination=>combination,:extra_chars=>data[:extra_chars],
+			:characters=>characters,:cmb_length=>data[:cmb_length],:type=>data[:type]})
 			yield(combinations) if combinations.length >= 1
 
 			z=combination_length-1
@@ -109,6 +69,65 @@ class PhoenixPassword
 			i+=1
 		end
 		return characters
+	end
+
+	def add_combinations(data)
+		if @rules
+			if !gen_rule_pass?({:combination=>data[:combination],:cmb_length=>data[:cmb_length]})
+				return []
+			end
+		end
+		combinations=[]
+		combination=data[:combination]
+		characters=data[:characters]
+		if data[:extra_chars].nil? || data[:iteration] == 0
+			
+		 combinations.<<(combination.join())
+		 if combination.last != characters.first
+			reverse_comb=combination.reverse
+			combinations.<<(reverse_comb.join())
+			reverse_comb.pop
+			reverse_compare=reverse_comb
+			reverse_comb=reverse_comb.join()
+	        check_match= matching_check({:combination=>reverse_comb,:match_limit=>data[:match_limit],:cap_limit=>data[:cap_limit]})
+			characters.each do |char|
+				next if char == characters.first
+				if  data[:type] == "unique"
+					combinations.<<("%s%s"%[reverse_comb,char])
+				else
+					if check_match
+						combinations.<<("%s%s"%[reverse_comb,char])
+					else							
+					  combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
+					end
+				end
+			end
+		 end
+
+		else
+			  	combinations << combination.join() if combination.include?(characters.last)
+	     if combination.last != characters.first
+				reverse_comb=combination.reverse 
+			    reverse_comb.pop
+			    reverse_compare=reverse_comb
+			    reverse_comb=reverse_comb.join
+			if reverse_comb.include?(characters.last)
+	        	check_match= matching_check({:combination=>reverse_comb,:match_limit=>data[:match_limit],:cap_limit=>data[:cap_limit]}) if data[:type] == 'matching'
+				characters.each do |char|
+					if  data[:type] == "unique"
+						combinations.<<("%s%s"%[reverse_comb,char])
+					elsif check_match
+						combinations.<<("%s%s"%[reverse_comb,char])
+					else							
+					    combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
+					end
+				end
+			else						
+			  combinations.<<("%s%s"%[reverse_comb,characters.last])				
+			end
+		 end
+		end
+		return combinations
 	end
 	
 	def matching_combinations(info)
@@ -738,6 +757,7 @@ class PhoenixPassword
 	end
 
 	def combinations(data)
+		@type=data[:type]
 		case data[:type]
 	  	 when "matching"
 	  	 	if data[:cmb_length].length == 1
@@ -770,9 +790,7 @@ class PhoenixPassword
 end
 
 
-
-
-phoenix=PhoenixPassword.new
+phoenix=PhoenixPassword.new(true)
 
 phoenix.combinations({:piped=>false,:type=>'matching',:cmb_length=>[7],
-:characters=>[0,1,2,3,4,5,6,7,8,9]})
+:characters=>[0,1,2,3,4,5,6,7,8,9,"a"]})
