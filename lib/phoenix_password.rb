@@ -72,7 +72,7 @@ class PhoenixPassword
 	end
 
 	def add_combinations(data)
-		if @rules
+		if @rules			
 			if !gen_rule_pass?({:combination=>data[:combination],:cmb_length=>data[:cmb_length]})
 				return []
 			end
@@ -96,7 +96,11 @@ class PhoenixPassword
 					combinations.<<("%s%s"%[reverse_comb,char])
 				else
 					if check_match
-						combinations.<<("%s%s"%[reverse_comb,char])
+						if @rules
+							combinations.<<("%s%s"%[reverse_comb,char]) if rules_pass?({:combination=>"%s%s"%[reverse_comb,char],:cmb_length=>data[:cmb_length],:type=>data[:type]})
+						else
+							combinations.<<("%s%s"%[reverse_comb,char])
+						end
 					else							
 					  combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
 					end
