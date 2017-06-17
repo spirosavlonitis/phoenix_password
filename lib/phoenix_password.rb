@@ -90,7 +90,7 @@ class PhoenixPassword
 		 if combination.last != characters.first
 			reverse_comb=combination.reverse
 		    if @rules	
-		        combinations.<<(reverse_comb.join()) if rules_pass?({:combination=>reverse_comb.join(),:cmb_length=>data[:cmb_length]})
+		        combinations.<<(reverse_comb.join()) if rules_pass?({:combination=>reverse_comb.join(),:cmb_length=>data[:cmb_length]-1})
 		    else
 				combinations.<<(reverse_comb.join())
 		    end
@@ -812,5 +812,5 @@ end
 
 phoenix=PhoenixPassword.new(true,3)
 
-phoenix.combinations({:piped=>false,:type=>'unique',:cmb_length=>[7],
+phoenix.combinations({:piped=>false,:type=>'matching',:cmb_length=>[7],
 :characters=>[0,1,2,3,4,5,6,7,8,9,"a"]})
