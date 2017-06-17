@@ -4,8 +4,9 @@ require_relative 'realistic'
 class PhoenixPassword
 	prepend Realistic
 
-	def initialize(rules=nil)
+	def initialize(rules=nil,strict=3)
 		@rules=rules
+		@strict=strict
 	end
 
 	def generate_combinations(data)
@@ -81,11 +82,18 @@ class PhoenixPassword
 		combination=data[:combination]
 		characters=data[:characters]
 		if data[:extra_chars].nil? || data[:iteration] == 0
-			
-		 combinations.<<(combination.join())
+		 if @rules	
+		    combinations.<<(combination.join()) if rules_pass?({:combination=>combination.join(),:cmb_length=>data[:cmb_length]})
+		 else
+		 	combinations.<<(combination.join())
+		 end
 		 if combination.last != characters.first
 			reverse_comb=combination.reverse
-			combinations.<<(reverse_comb.join())
+		    if @rules	
+		        combinations.<<(reverse_comb.join()) if rules_pass?({:combination=>reverse_comb.join(),:cmb_length=>data[:cmb_length]})
+		    else
+				combinations.<<(reverse_comb.join())
+		    end
 			reverse_comb.pop
 			reverse_compare=reverse_comb
 			reverse_comb=reverse_comb.join()
@@ -97,12 +105,16 @@ class PhoenixPassword
 				else
 					if check_match
 						if @rules
-							combinations.<<("%s%s"%[reverse_comb,char]) if rules_pass?({:combination=>"%s%s"%[reverse_comb,char],:cmb_length=>data[:cmb_length],:type=>data[:type]})
+							combinations.<<("%s%s"%[reverse_comb,char]) if rules_pass?({:combination=>"%s%s"%[reverse_comb,char],:cmb_length=>data[:cmb_length]})
 						else
 							combinations.<<("%s%s"%[reverse_comb,char])
 						end
 					else							
-					  combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
+						if @rules
+						  combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last && rules_pass?({:combination=>"%s%s"%[reverse_comb,char],:cmb_length=>data[:cmb_length]})
+						else
+						  combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
+						end
 					end
 				end
 			end
@@ -794,7 +806,7 @@ class PhoenixPassword
 end
 
 
-phoenix=PhoenixPassword.new(true)
+phoenix=PhoenixPassword.new(true,3)
 
 phoenix.combinations({:piped=>false,:type=>'matching',:cmb_length=>[7],
 :characters=>[0,1,2,3,4,5,6,7,8,9,"a"]})
