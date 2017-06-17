@@ -4,9 +4,9 @@ require_relative 'realistic'
 class PhoenixPassword
 	prepend Realistic
 
-	def initialize(rules=nil,strict=3)
+	def initialize(rules=nil,strictness=3)
 		@rules=rules
-		@strict=strict
+		@strictness=strictness
 	end
 
 	def generate_combinations(data)
@@ -101,7 +101,11 @@ class PhoenixPassword
 			characters.each do |char|
 				next if char == characters.first
 				if  data[:type] == "unique"
-					combinations.<<("%s%s"%[reverse_comb,char])
+					if @rules
+					  combinations.<<("%s%s"%[reverse_comb,char]) if rules_pass?({:combination=>"%s%s"%[reverse_comb,char],:cmb_length=>data[:cmb_length]})
+				    else
+					  combinations.<<("%s%s"%[reverse_comb,char])
+					end
 				else
 					if check_match
 						if @rules
@@ -808,5 +812,5 @@ end
 
 phoenix=PhoenixPassword.new(true,3)
 
-phoenix.combinations({:piped=>false,:type=>'matching',:cmb_length=>[7],
+phoenix.combinations({:piped=>false,:type=>'unique',:cmb_length=>[7],
 :characters=>[0,1,2,3,4,5,6,7,8,9,"a"]})
