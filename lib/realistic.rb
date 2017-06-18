@@ -1,5 +1,11 @@
 module Realistic
 
+	def user_rules(data)
+		@own_rules.each do |rule|
+			return true if data[:combination].match(rule)
+		end
+		return false
+	end
 
 	def check_five(data)
 
@@ -16,6 +22,11 @@ module Realistic
 		if @strictness >=1
 			return false if data[:combination].match(/^([a-z]{3}[0-9]{2}|[0-9]{3}[a-z]{2}|[0-9]{3}[a-z]{2}|[0-9]{2}[a-z]{3})$/i)
 		end
+
+		if @own_rules
+			return false if user_rules(data)
+		end
+
 		return true	
 	end
 
@@ -35,6 +46,11 @@ module Realistic
 		if @strictness >=1
 			return false if data[:combination].match(/^([a-z]{3}[0-9]{3}|[0-9]{3}[a-z]{3})$/i)
 		end
+
+		if @own_rules
+			return false if user_rules(data)
+		end
+
 		return true	
 	end
 
@@ -55,6 +71,9 @@ module Realistic
 			return false if data[:combination].match(/([a-z]{4}[0-9]{3}|[a-z]{3}[0-9]{4}|[0-9]{4}[a-z]{3}|[0-9]{3}[a-z]{4})/i)
 		end
 
+		if @own_rules
+			return false if user_rules(data)
+		end
 
 		return true
 	end
@@ -76,6 +95,11 @@ module Realistic
 		if @strictness >=1
 			return false if data[:combination].match(/([a-z]{4}[0-9]{4}|[0-9]{4}[a-z]{4})/i)
 		end
+
+		if @own_rules
+			return false if user_rules(data)
+		end
+
 		return true
 	end
 
@@ -97,11 +121,14 @@ module Realistic
 			return false if data[:combination].match(/([a-z]{5}[0-9]{4}|[a-z]{4}[0-9]{5}|[0-9]{5}[a-z]{4}|[0-9]{4}[a-z]{5})/i)
 		end
 
+		if @own_rules
+			return false if user_rules(data)
+		end
+
 		return true
 	end
 
 	def check_ten(data)
-
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{10}/)
@@ -118,6 +145,10 @@ module Realistic
 			return false if data[:combination].match(/([a-z]{5}[0-9]{5}|[0-9]{5}[a-z]{5})/i)
 		end
 		
+		if @own_rules
+			return false if user_rules(data)
+		end
+
 		return true
 	end
 
@@ -136,6 +167,10 @@ module Realistic
 
 		if @strictness >=1
 			return false if data[:combination].match(/([a-z]{5}[0-9]{6}|[a-z]{6}[0-9]{5}|[0-9]{5}[a-z]{6}|[0-9]{6}[a-z]{5})/i)
+		end
+
+		if @own_rules
+			return false if user_rules(data)
 		end
 
 		return true
@@ -158,12 +193,16 @@ module Realistic
 		if @strictness >=1
 			return false if data[:combination].match(/([a-z]{6}[0-9]{6}|[0-9]{6}[a-z]{6})/i)
 		end
+
+		if @own_rules
+			return false if user_rules(data)
+		end
+
 		return true
 	end
 
 
 	def check_thirteen(data)
-
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{13}/)
@@ -179,6 +218,11 @@ module Realistic
 		if @strictness >=1
 			return false if data[:combination].match(/([a-z]{7}[0-9]{6}|[a-z]{6}[0-9]{7}|[0-9]{7}[a-z]{6}|[0-9]{6}[a-z]{7})/i)
 		end
+
+		if @own_rules
+			return false if user_rules(data)
+		end
+
 		return true
 	end
 
@@ -201,11 +245,14 @@ module Realistic
 			return false if data[:combination].match(/([a-z]{7}[0-9]{7}|[0-9]{7}[a-z]{7})/i)
 		end
 
+		if @own_rules
+			return false if user_rules(data)
+		end
+
 		return true
 	end
 
 	def check_fifteen(data)
-
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{15}/)
@@ -221,10 +268,17 @@ module Realistic
 		if @strictness >=1
 			return false if data[:combination].match(/([a-z]{7}[0-9]{8}|[a-z]{8}[0-9]{7}|[0-9]{7}[a-z]{8}|[0-9]{8}[a-z]{7})/i)
 		end
+
+		if @own_rules
+			return false if user_rules(data)
+		end
+
 		return true
+		
 	end
 
 	def rules_pass?(data)
+
 		if data[:cmb_length] == 5
 			return check_five(data)
 		elsif data[:cmb_length] == 6
@@ -247,8 +301,8 @@ module Realistic
 			return check_fourteen(data)
 		elsif data[:cmb_length] == 15
 			return check_fifteen(data)
-		else
-			return true
 		end
+
+		return true
 	end	
 end

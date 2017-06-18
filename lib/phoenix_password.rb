@@ -7,6 +7,8 @@ class PhoenixPassword
 	def initialize(data={})
 		@rules=data[:rules]
 		@strictness=data[:strictness] ? data[:strictness] : 1
+		@own_rules=data[:own_rules] if data[:own_rules].is_a?(Array) && data[:own_rules][0].is_a?(Regexp)
+
 	end
 
 	def generate_combinations(data)
@@ -796,5 +798,5 @@ class PhoenixPassword
 end
 
 
-PhoenixPassword.new({:rules=>true}).combinations({:piped=>false,:type=>'matching',
+PhoenixPassword.new({:rules=>true,:own_rules=>[/[a]{2}01234/]}).combinations({:piped=>false,:type=>'matching',
 :characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[7]})
