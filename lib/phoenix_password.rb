@@ -4,7 +4,7 @@ require_relative 'realistic'
 class PhoenixPassword
 	prepend Realistic
 
-	def initialize(data)
+	def initialize(data={})
 		@rules=data[:rules]
 		@strictness=data[:strictness] ? data[:strictness] : 1
 	end
@@ -798,9 +798,3 @@ class PhoenixPassword
 		end
 	end
 end
-
-
-phoenix=PhoenixPassword.new({:rules=>true,:strictness=>3})
-
-phoenix.combinations({:piped=>false,:type=>'matching',:cmb_length=>[7],
-:characters=>[0,1,2,3,4,5,6,7,8,9,"a"]})
