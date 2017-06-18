@@ -73,11 +73,7 @@ class PhoenixPassword
 	end
 
 	def add_combinations(data)
-		if @rules			
-			if !gen_rule_pass?({:combination=>data[:combination],:cmb_length=>data[:cmb_length]})
-				return []
-			end
-		end
+
 		combinations=[]
 		combination=data[:combination]
 		characters=data[:characters]
@@ -798,3 +794,7 @@ class PhoenixPassword
 		end
 	end
 end
+
+
+PhoenixPassword.new({:rules=>true}).combinations({:piped=>false,:type=>'matching',
+:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[7]})
