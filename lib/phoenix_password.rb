@@ -4,9 +4,9 @@ require_relative 'realistic'
 class PhoenixPassword
 	prepend Realistic
 
-	def initialize(rules=nil,strictness=3)
-		@rules=rules
-		@strictness=strictness
+	def initialize(data)
+		@rules=data[:rules]
+		@strictness=data[:strictness] ? data[:strictness] : 1
 	end
 
 	def generate_combinations(data)
@@ -754,24 +754,18 @@ class PhoenixPassword
 		end
 	end
 
-	def multi_length_matching(data)
+	def multi_length(data)
 		dataB=data.clone
 		i=0
 		while i < data[:cmb_length].length
 			dataB[:cmb_length] = data[:cmb_length][i]
 			dataB[:characters]=data[:characters].clone
-			matching_combinations(dataB)
-			i+=1
-		end
-	end
-
-	def multi_length_unique(data)
-		dataB=data.clone
-		i=0
-		while i < data[:cmb_length].length
-			dataB[:cmb_length] = data[:cmb_length][i]
-			dataB[:characters]=data[:characters].clone
-			unique_combinations(dataB)
+			if data[:type] == 'unique'
+			 unique_combinations(dataB)
+			elsif data[:type] == 'matching'
+			 matching_combinations(dataB)
+			end
+			
 			i+=1
 		end
 	end
@@ -783,24 +777,20 @@ class PhoenixPassword
 	  	 	if data[:cmb_length].length == 1
 	  	 	   data[:cmb_length]=data[:cmb_length][0]
 			   matching_combinations(data)
-			elsif data[:piped]
-				multi_length_matching(data)
 			else
 				data[:file_append]=false
 				data[:write_cmbs]=data[:cmb_length].clone
-				multi_length_matching(data)
+				multi_length(data)
 	  	 	end
 
 		 when "unique"
 		 	if data[:cmb_length].length == 1
 		 		data[:cmb_length]=data[:cmb_length].first
 		 		unique_combinations(data)
-		 	elsif data[:piped]
-		 		multi_length_unique(data)
 		 	else
 				data[:file_append]=false
 				data[:write_cmbs]=data[:cmb_length].clone
-				multi_length_unique(data)
+				multi_length(data)
 		 	end
 		 else
 		 	puts "Invalid combination type"
@@ -810,7 +800,7 @@ class PhoenixPassword
 end
 
 
-phoenix=PhoenixPassword.new
+phoenix=PhoenixPassword.new({:rules=>true,:strictness=>3})
 
 phoenix.combinations({:piped=>false,:type=>'matching',:cmb_length=>[7],
-:characters=>[0,1,2,3,4,5,6,7,8,"A"],:cap_limit=>1})
+:characters=>[0,1,2,3,4,5,6,7,8,9,"a"]})

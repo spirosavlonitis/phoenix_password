@@ -14,7 +14,9 @@ module Realistic
 	end
 
 	def rules_pass?(data)
-		if data[:cmb_length] == 6
+		if data[:cmb_length] == 5
+			return check_five(data)
+		elsif data[:cmb_length] == 6
 			return check_six(data)
 		elsif data[:cmb_length] == 7
 			return check_seven(data)
@@ -24,15 +26,44 @@ module Realistic
 			return check_nine(data)
 		elsif data[:cmb_length] == 10
 			return check_ten(data)
+		elsif data[:cmb_length] == 11
+			return check_eleven(data)
+		elsif data[:cmb_length] == 12
+			return check_twelve(data)
+		elsif data[:cmb_length] == 13
+			return check_thirteen(data)
+		elsif data[:cmb_length] == 14
+			return check_fourteen(data)
+		elsif data[:cmb_length] == 15
+			return check_fifteen(data)
 		else
 			return true
 		end
 
 	end
 
+	def check_five(data)
+		if @strictness >=1
+			return false if data[:combination].match(/^([a-z]{3}[0-9]{2}|[0-9]{3}[a-z]{2}|[0-9]{3}[a-z]{2}|[0-9]{2}[a-z]{3})$/i)
+		end
+
+		if @strictness >= 2
+			return false if data[:combination].match(/[0-9]{6}/)
+		end
+
+		if @strictness >= 3
+			return false if data[:combination].match(/[A-Z]{6}/i)
+		end
+
+		return true	
+	end
+
+
+
 	def check_six(data)
-		half_check=data[:combination].match(/^([a-z]{3}[0-9]{3}|[0-9]{3}[a-z]{3})$/i)
-		return false if half_check
+		if @strictness >=1
+			return false if data[:combination].match(/^([a-z]{3}[0-9]{3}|[0-9]{3}[a-z]{3})$/i)
+		end
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{6}/)
@@ -46,9 +77,9 @@ module Realistic
 	end
 
 	def check_seven(data)
-		half_check=data[:combination].match(/([a-z]{4}[0-9]{3}|[a-z]{3}[0-9]{4}|[0-9]{4}[a-z]{3}|[0-9]{3}[a-z]{4})/i)
-
-		return false if half_check
+		if @strictness >=1
+			return false if data[:combination].match(/([a-z]{4}[0-9]{3}|[a-z]{3}[0-9]{4}|[0-9]{4}[a-z]{3}|[0-9]{3}[a-z]{4})/i)
+		end
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{7}/)
@@ -61,8 +92,10 @@ module Realistic
 	end
 
 	def check_eight(data)
-		half_check=data[:combination].match(/([a-z]{4}[0-9]{4}|[0-9]{4}[a-z]{4})/i)
-		return false if half_check
+
+		if @strictness >=1
+			return false if data[:combination].match(/([a-z]{4}[0-9]{4}|[0-9]{4}[a-z]{4})/i)
+		end
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{8}/)
@@ -75,9 +108,10 @@ module Realistic
 	end
 
 	def check_nine(data)
-		half_check_a=data[:combination].match(/([a-z]{5}[0-9]{4}|[a-z]{4}[0-9]{5}|[0-9]{5}[a-z]{4}|[0-9]{4}[a-z]{5})/i)
 
-		return false if half_check
+		if @strictness >=1
+			return false if data[:combination].match(/([a-z]{5}[0-9]{4}|[a-z]{4}[0-9]{5}|[0-9]{5}[a-z]{4}|[0-9]{4}[a-z]{5})/i)
+		end
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{9}/)
@@ -90,9 +124,10 @@ module Realistic
 	end
 
 	def check_ten(data)
-		half_check=data[:combination].match(/([a-z]{5}[0-9]{5}|[0-9]{5}[a-z]{5})/i)
 
-		return false if half_check
+		if @strictness >=1
+			return false if data[:combination].match(/([a-z]{5}[0-9]{5}|[0-9]{5}[a-z]{5})/i)
+		end
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{10}/)
@@ -105,9 +140,10 @@ module Realistic
 	end
 
 	def check_eleven(data)
-		half_check_a=data[:combination].match(/([a-z]{5}[0-9]{6}|[a-z]{6}[0-9]{5}|[0-9]{5}[a-z]{6}|[0-9]{6}[a-z]{5})/i)
 
-		return false if half_check
+		if @strictness >=1
+			return false if data[:combination].match(/([a-z]{5}[0-9]{6}|[a-z]{6}[0-9]{5}|[0-9]{5}[a-z]{6}|[0-9]{6}[a-z]{5})/i)
+		end
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{11}/)
@@ -120,9 +156,10 @@ module Realistic
 	end
 
 	def check_twelve(data)
-		half_check=data[:combination].match(/([a-z]{6}[0-9]{6}|[0-9]{6}[a-z]{6})/i)
 
-		return false if half_check
+		if @strictness >=1
+			return false if data[:combination].match(/([a-z]{6}[0-9]{6}|[0-9]{6}[a-z]{6})/i)
+		end
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{12}/)
@@ -136,9 +173,10 @@ module Realistic
 
 
 	def check_thirteen(data)
-		half_check_a=data[:combination].match(/([a-z]{7}[0-9]{6}|[a-z]{6}[0-9]{7}|[0-9]{7}[a-z]{6}|[0-9]{6}[a-z]{7})/i)
 
-		return false if half_check
+		if @strictness >=1
+			return false if data[:combination].match(/([a-z]{7}[0-9]{6}|[a-z]{6}[0-9]{7}|[0-9]{7}[a-z]{6}|[0-9]{6}[a-z]{7})/i)
+		end
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{13}/)
@@ -151,9 +189,10 @@ module Realistic
 	end
 
 	def check_fourteen(data)
-		half_check=data[:combination].match(/([a-z]{7}[0-9]{7}|[0-9]{7}[a-z]{7})/i)
-
-		return false if half_check
+		
+		if @strictness >=1
+			return false if data[:combination].match(/([a-z]{7}[0-9]{7}|[0-9]{7}[a-z]{7})/i)
+		end
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{14}/)
@@ -166,9 +205,10 @@ module Realistic
 	end
 
 	def check_fifteen(data)
-		half_check_a=data[:combination].match(/([a-z]{7}[0-9]{8}|[a-z]{8}[0-9]{7}|[0-9]{7}[a-z]{8}|[0-9]{8}[a-z]{7})/i)
 
-		return false if half_check
+		if @strictness >=1
+			return false if data[:combination].match(/([a-z]{7}[0-9]{8}|[a-z]{8}[0-9]{7}|[0-9]{7}[a-z]{8}|[0-9]{8}[a-z]{7})/i)
+		end
 
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{15}/)
