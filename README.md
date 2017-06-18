@@ -26,7 +26,7 @@ In order to generate combinations simply add the minimum of the required options
 ```ruby
 irb(main):001:0> require 'phoenix_password'
 => true
-irb(main):002:0>  PhoenixPassword.combinations({:piped=>true,:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6],:type=>'matching'})
+irb(main):002:0>  PhoenixPassword.new.combinations({:piped=>true,:type=>'matching',:cmb_length=>[6],:characters=>[0,1,2,3,4,5,6,7,8,9]})
 ```
 001273
 
@@ -38,6 +38,22 @@ irb(main):002:0>  PhoenixPassword.combinations({:piped=>true,:characters=>[0,1,2
 
 ## Manual
 This is a list of the options available to you and what they do
+
+```ruby
+obj_a=PhoenixPassword.new() 
+obj_b=PhoenixPassword.new({:rules=>true})
+obj=_cPhoenixPassword.new({:rules=>true,:stricness=>2})
+```
+
+When you're using an instance of the PhoenixPassword class you can initialize it in 3 different ways.
+
+**a)No arguments:**
+This means that there will be no extra combination restriction rules other than the ones defined in the combinations method.
+
+**b)Setting :rules to true**
+By setting rules to true there is an extra combination filter added, namely any combinations that have alternating letter digit value get discarted: 0a0a0a or a0a0a0 etc.
+
+
 
 ```ruby	
 :piped=>(true or false)
