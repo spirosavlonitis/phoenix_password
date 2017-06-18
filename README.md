@@ -42,17 +42,51 @@ This is a list of the options available to you and what they do
 ```ruby
 obj_a=PhoenixPassword.new() 
 obj_b=PhoenixPassword.new({:rules=>true})
-obj=_cPhoenixPassword.new({:rules=>true,:stricness=>2})
+obj_c=PhoenixPassword.new({:rules=>true,:stricness=>2})
+obj_d=PhoenixPassword.new({:rules=>true,:stricness=>2,:own_rules=>[/regexp_a/,regexp_b]})
 ```
 
-When you're using an instance of the PhoenixPassword class you can initialize it in 3 different ways.
+You can initialize a PhoenixPassword object in 4 different ways.
 
 **a)No arguments:**
 This means that there will be no extra combination restriction rules other than the ones defined in the combinations method.
 
-**b)Setting :rules to true**
-By setting rules to true there is an extra combination filter added, namely any combinations that have alternating letter digit value get discarted: 0a0a0a or a0a0a0 etc.
+```ruby
+obj_b=PhoenixPassword.new({:rules=>true})
+```
+**b)rules**
+By setting rules to true there is an extra combination filter added, namely any combinations that have alternating letter digit value get discarded: 0a0a0a or a0a0a0 etc.
 
+```ruby
+obj_b=PhoenixPassword.new({:rules=>true,:stricness=>2})
+```
+**c)strictness**
+When using rules you can also change the strictness level of combination filtering.By default it is set to 0 meaning no other combinations will be filtered other than what rules filters on its own.
+
+When using a level say 2 you are implementing the filters provided by 0,1 and 2.If you use 3 the you use 0,1,2 and 3
+filters.
+
+There are 4 levels in total:
+X=digit,A=letter
+
+Level 0:
+default filtering 	XAXAXA or AXAXAX
+
+Level 1:
+Filters combinations that are half digits or half letters
+XXXAAA or AAAXXX.
+
+Level 2:
+Filters combinations that have only digits XXXXXX
+
+Level 3:
+Filters combinations that have only letters AAAAAA
+
+
+**d)own_rules**
+If you want to use your own combination filtering rules you must use the own_rules key and add an array with Regexp objects.
+
+The rules that you will add will be implemented after all the rules that are used by the strictness level have been checked.Make sure when using your rules that you don't filter twice things that have been already checked.
 
 
 ```ruby	

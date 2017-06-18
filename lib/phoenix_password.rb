@@ -6,7 +6,7 @@ class PhoenixPassword
 
 	def initialize(data={})
 		@rules=data[:rules]
-		@strictness=data[:strictness] ? data[:strictness] : 1
+		@strictness=data[:strictness] ? data[:strictness] : 0
 		@own_rules=data[:own_rules] if data[:own_rules].is_a?(Array) && data[:own_rules][0].is_a?(Regexp)
 
 	end
