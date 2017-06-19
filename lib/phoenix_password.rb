@@ -8,7 +8,6 @@ class PhoenixPassword
 		@rules=data[:rules]
 		@strictness=data[:strictness] ? data[:strictness] : 0
 		@own_rules=data[:own_rules] if data[:own_rules].is_a?(Array) && data[:own_rules][0].is_a?(Regexp)
-
 	end
 
 	def generate_combinations(data)
@@ -770,6 +769,8 @@ class PhoenixPassword
 
 	def combinations(data)
 		@type=data[:type]
+		puts "File size estimates are invalid when
+		using rules" if @rules && data[:piped]
 		case data[:type]
 	  	 when "matching"
 	  	 	if data[:cmb_length].length == 1
@@ -796,7 +797,3 @@ class PhoenixPassword
 		end
 	end
 end
-
-
-PhoenixPassword.new({:rules=>true,:own_rules=>[/[a]{2}01234/]}).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[7]})

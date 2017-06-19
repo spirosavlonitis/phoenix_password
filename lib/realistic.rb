@@ -80,7 +80,6 @@ module Realistic
 
 	def check_eight(data)
 
-
 		if @strictness >= 2
 			return false if data[:combination].match(/[0-9]{8}/)
 		end
@@ -274,7 +273,7 @@ module Realistic
 		end
 
 		return true
-		
+
 	end
 
 	def rules_pass?(data)
