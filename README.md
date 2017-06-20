@@ -43,7 +43,7 @@ This is a list of the options available to you and what they do
 obj_a=PhoenixPassword.new() 
 obj_b=PhoenixPassword.new({:rules=>true})
 obj_c=PhoenixPassword.new({:rules=>true,:stricness=>2})
-obj_d=PhoenixPassword.new({:rules=>true,:stricness=>2,:own_rules=>[/regexp_a/,regexp_b]})
+obj_d=PhoenixPassword.new({:rules=>true,:stricness=>2,:own_rules=>[/regexp_a/,/regexp_b/]})
 ```
 
 You can initialize a PhoenixPassword object in 4 different ways.
@@ -91,7 +91,7 @@ Filters combinations that have only letters AAAAAA
 **d)own_rules**
 
 ```ruby
-obj_d=PhoenixPassword.new({:rules=>true,:stricness=>2,:own_rules=>[/regexp_a/,regexp_b]})
+obj_d=PhoenixPassword.new({:rules=>true,:stricness=>2,:own_rules=>[/regexp_a/,/regexp_b/]})
 ```
 
 If you want to use your own combination filtering rules you must use the own_rules key and add an array with Regexp objects.
