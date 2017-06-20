@@ -90,11 +90,15 @@ Filters combinations that have only letters AAAAAA
 
 **d)own_rules**
 
+```ruby
 obj_d=PhoenixPassword.new({:rules=>true,:stricness=>2,:own_rules=>[/regexp_a/,regexp_b]})
+```
 
 If you want to use your own combination filtering rules you must use the own_rules key and add an array with Regexp objects.
 
 The rules that you will add will be implemented after all the rules that are used by the strictness level have been checked.Make sure when using your rules that you don't filter twice things that have been already checked.
+
+==================================================
 
 ```ruby	
 :piped=>(true or false)
