@@ -1,4 +1,4 @@
-require "phoenix_password/version"
+require "./phoenix_password/version"
 require_relative 'realistic'
 
 class PhoenixPassword
