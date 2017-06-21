@@ -377,6 +377,9 @@ module FileSize
 		  else
 			  combinations +=get_combinations({:cmb_length=>data[:cmb_length],
 			  :characters=>digits,:extra_chars=>data[:extra_chars]})
+			  extra_digits = data[:extra_chars].join().scan(/[0-9]/)
+			  combinations -=get_combinations({:cmb_length=>data[:cmb_length],
+			  :characters=>digits,:extra_chars=>extra_digits})
 		  end
 		end
 
