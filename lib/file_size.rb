@@ -405,6 +405,9 @@ module FileSize
 					dataB[:cmb_length]=n
 				  if data[:cap_limit].nil?
 					current_combs=get_combinations(dataB)
+					if @rules
+						current_combs-=get_rule_size(dataB)
+					end
 					poss_combs +=current_combs
 				    unless data[:match_limit].nil?
 					     poss_combs -= get_above_limit(dataB)
@@ -451,5 +454,4 @@ module FileSize
 				exit
 			end	
 	end
-
 end

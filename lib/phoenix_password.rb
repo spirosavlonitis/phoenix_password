@@ -354,9 +354,8 @@ class PhoenixPassword
 		 	puts "Invalid combination type"
 		 	exit
 		end
-		puts @fh.closed? if !data[:piped]
 	end
 end
 
-PhoenixPassword.new({:rules=>true,:strictness=>3}).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[6]})
+PhoenixPassword.new({:rules=>true,:strictness=>1}).combinations({:piped=>false,:type=>'matching',
+:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[6,7]})
