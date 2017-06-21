@@ -357,5 +357,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.new({:rules=>true,:strictness=>1}).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[6,7]})
+PhoenixPassword.new({:rules=>true,:strictness=>2}).combinations({:piped=>false,:type=>'matching',
+:extra_chars=>["9"],:characters=>[0,1,2,3,4,5,6,7,8,"a","b"],:cmb_length=>[6]})

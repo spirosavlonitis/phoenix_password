@@ -362,12 +362,22 @@ module FileSize
 	def get_rule_size(data)
 		characters=data[:characters].join()
 		digits=characters.scan(/[0-9]/)
-		letters=characters.scan(/[A-Z]/i)
+	
+		if data[:cap_limit]
+			letters=characters.scan(/[a-z]/i)		
+		else
+			letters=characters.scan(/[A-Z]/i)
+		end
 
 		combinations=0
 		if @strictness >= 2
-		  combinations +=get_combinations({:cmb_length=>data[:cmb_length],
-		  :characters=>digits,:extra_chars=>data[:extra_chars]})	
+		  if data[:extra_chars].nil?
+			  combinations +=get_combinations({:cmb_length=>data[:cmb_length],
+			  :characters=>digits})
+		  else
+			  combinations +=get_combinations({:cmb_length=>data[:cmb_length],
+			  :characters=>digits,:extra_chars=>data[:extra_chars]})
+		  end
 		end
 
 		if @strictness == 3
