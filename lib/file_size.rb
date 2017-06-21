@@ -1,7 +1,6 @@
 module FileSize
 
 
-
 	def get_size(data)
 		bytes=data[:combinations]*(data[:cmb_length]+1)
 		kilo_bytes=bytes/1000.0
@@ -216,7 +215,6 @@ module FileSize
 		end
 	end
 
-
 	def cap_limit_combs(data,x=0)
 		if data[:type] == "matching"
 			if !data[:match_limit].nil?
@@ -361,6 +359,24 @@ module FileSize
 		return 0
 	end
 
+	def get_rule_size(data)
+		characters=data[:characters].join()
+		digits=characters.scan(/[0-9]/)
+		letters=characters.scan(/[A-Z]/i)
+
+		combinations=0
+		if @strictness >= 2
+		  combinations +=get_combinations({:cmb_length=>data[:cmb_length],
+		  :characters=>digits,:extra_chars=>data[:extra_chars]})	
+		end
+
+		if @strictness == 3
+		  combinations +=get_combinations({:cmb_length=>data[:cmb_length],
+		  :characters=>letters,:extra_chars=>data[:extra_chars]})	
+		end
+
+		return combinations
+	end
 
 	def file_info(data)
 			if data[:write_cmbs].nil?
@@ -374,10 +390,15 @@ module FileSize
 				elsif !data[:cap_limit].nil?
 			      poss_combs=cap_limit_combs(data)
 				end
-				matching_file_size=get_size({:cmb_length=>data[:cmb_length],:combinations=>poss_combs})
+
+				if @rules
+					poss_combs -=get_rule_size(data)
+				end
+
+				file_size=get_size({:cmb_length=>data[:cmb_length],:combinations=>poss_combs})				
 			else
 				poss_combs=0
-				matching_file_size={:bytes=>0,:kilo=>0,:mega=>0,:giga=>0,:tera=>0,:peta=>0}
+				file_size={:bytes=>0,:kilo=>0,:mega=>0,:giga=>0,:tera=>0,:peta=>0}
 				dataB=data.clone
 				cmb_count=data[:write_cmbs].length if !data[:cap_limit].nil?
 				data[:write_cmbs].each do |n|
@@ -396,15 +417,15 @@ module FileSize
 				  end
 					get_size({:cmb_length=>n,:combinations=>current_combs})do |sizes|
 						sizes.each do |key,value|
-							matching_file_size[key] +=value
+							file_size[key] +=value
 						end 
-						matching_file_size[:bytes]=0 if matching_file_size[:kilo] >= 1
+						file_size[:bytes]=0 if file_size[:kilo] >= 1
 					end
 				end
 			end
 			puts "Possible  #{data[:type]} combinations #{poss_combs}."
 			size_string="File size:"
-			matching_file_size.each do |key,value|
+			file_size.each do |key,value|
 				next if value == 0
 				size_string += " #{"%.2f"% value}#{key.capitalize}#{'Bytes' if key != :bytes}"
 			end
