@@ -187,7 +187,6 @@ class PhoenixPassword
 	    end while char_sum <= total_characters
 		
 		@fh.close if @fh && @cmbs_length.nil?
-		puts @cmbs_length
 		return matching
 	end
 
@@ -225,7 +224,7 @@ class PhoenixPassword
 	   		data[:extra_chars]=info[:extra_chars]
 	   end
 
- 	   unique_file=create_file(info) unless info[:piped]
+	   create_file(info) if !info[:piped] && @fh.nil?
 
 	   total_characters=data[:characters].length
 	   char_sum= data[:characters].length
@@ -247,7 +246,7 @@ class PhoenixPassword
 				if info[:piped]
 				  puts combination 
 				else	
-				  unique_file.puts(combination)
+				  @fh.puts(combination)
 				end
 			    unique_combs= unique_combs+1
 			 end
@@ -259,10 +258,7 @@ class PhoenixPassword
 			raise
 		end while char_sum <= total_characters
 		
-		unless unique_file.nil?
-			unique_file.close
-		end
-
+		@fh.close if @fh && @cmbs_length.nil?
 		return unique_combs
 	end
 
@@ -672,18 +668,14 @@ class PhoenixPassword
 		return return_sizes
 	end
 
-
 	def create_file(data)
-		    continue="y"
-		    continue=file_info(data) if @fh.nil?
+		    continue=file_info(data)
 			case continue
 			when /(y|Y)/
-				if @fh.nil?		
 					puts "Creating file"
 					print "Enter save file name:"
 				    file_name=gets.chomp
 				    @fh=File.open("#{file_name}.txt","a")
-				end
 			when /(n|N)/
 				puts "Goodbye"
 				exit
@@ -781,7 +773,6 @@ class PhoenixPassword
 		 		data[:cmb_length]=data[:cmb_length].first
 		 		unique_combinations(data)
 		 	else
-				data[:file_append]=false
 				data[:write_cmbs]=data[:cmb_length].clone
 				multi_length(data)
 		 	end
@@ -792,6 +783,5 @@ class PhoenixPassword
 	end
 end
 
-
-PhoenixPassword.new.combinations({:piped=>true,:type=>'matching',
+PhoenixPassword.new.combinations({:piped=>false,:type=>'matching',
 :characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6,7]})
