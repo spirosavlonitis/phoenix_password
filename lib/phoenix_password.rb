@@ -10,6 +10,13 @@ class PhoenixPassword
 		@rules=data[:rules]
 		@strictness=data[:strictness] ? data[:strictness] : 0
 		@own_rules=data[:own_rules] if data[:own_rules].is_a?(Array) && data[:own_rules][0].is_a?(Regexp)
+		@checkpoint=data[:checkpoint]
+		@restore=data[:restore]
+
+		if data[:checkpoint]
+			@restore_file=File.new("checkpoint","w")
+			@check_repetition=data[:check_repetition] ? data[:check_repetition] : 100000
+		end
 	end
 
 	def generate_combinations(data)
@@ -22,8 +29,19 @@ class PhoenixPassword
 		i=0
 		possible_combinations=characters.length**combination_length
 		chars_used=Array.new(data[:cmb_length],0)
-		
+
+		if @restore
+		end
+		r = 0 if @restore_file
 		while i < possible_combinations/characters.length
+			if @restore_file
+				r +=1
+				if r == @check_repetition
+ 				  @restore_file.puts(combination.join())
+				  @restore_file.puts(chars_used.join())
+				  r = 0
+				end
+			end
 			x=1
 			change_count=1
 			while x < combination_length
@@ -330,8 +348,7 @@ class PhoenixPassword
 
 	def combinations(data)
 		@type=data[:type]
-		puts "File size estimates are invalid when
-		using rules" if @rules && !data[:piped]
+		puts "File size estimates are invalid when using rules" if @rules && !data[:piped]
 		case data[:type]
 	  	 when "matching"
 	  	 	if data[:cmb_length].length == 1
@@ -354,8 +371,9 @@ class PhoenixPassword
 		 	puts "Invalid combination type"
 		 	exit
 		end
+		@restore_file.close if @checkpoint
 	end
 end
 
-PhoenixPassword.new({:rules=>true,:strictness=>2}).combinations({:piped=>false,:type=>'unique',
+PhoenixPassword.new({:rules=>true,:strictness=>2,:checkpoint=>true}).combinations({:piped=>false,:type=>'unique',
 :characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[6,7]})
