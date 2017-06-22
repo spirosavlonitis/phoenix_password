@@ -370,27 +370,17 @@ module FileSize
 		end
 
 		combinations=0
-		if @strictness >= 2
-		  if data[:extra_chars].nil?
+		if data[:extra_chars].nil?
+		  if @strictness >= 2
 			  combinations +=get_combinations({:cmb_length=>data[:cmb_length],
 			  :characters=>digits})
-		  else
-			  extra_digits = data[:extra_chars].join().scan(/[0-9]/)
-			  if extra_digits.length >= 1
-			  #combinations +=get_combinations({:cmb_length=>data[:cmb_length],
-			  #:characters=>digits,:extra_chars=>extra_digits})
-			  else
-				  combinations +=get_combinations({:cmb_length=>data[:cmb_length],
-				  :characters=>digits,:extra_chars=>data[:extra_chars]})
-			  end
+		  end
+
+		  if @strictness == 3
+			 combinations +=get_combinations({:cmb_length=>data[:cmb_length],
+			 :characters=>letters,:extra_chars=>data[:extra_chars]})	
 		  end
 		end
-
-		if @strictness == 3
-		  combinations +=get_combinations({:cmb_length=>data[:cmb_length],
-		  :characters=>letters,:extra_chars=>data[:extra_chars]})	
-		end
-
 		return combinations
 	end
 
@@ -458,10 +448,10 @@ module FileSize
 		    continue=file_info(data)
 			case continue
 			when /(y|Y)/
-					puts "Creating file"
-					print "Enter save file name:"
+					print "Enter file name:"
 				    file_name=gets.chomp
 				    @fh=File.open("#{file_name}.txt","a")
+					puts "Creating file"
 			when /(n|N)/
 				puts "Goodbye"
 				exit

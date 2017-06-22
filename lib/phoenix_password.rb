@@ -124,11 +124,7 @@ class PhoenixPassword
 		 end
 
 		else
-		 if @rules
-		  combinations << combination.join() if combination.include?(characters.last) && rules_pass?({:combination=>combination.join(),:cmb_length=>data[:cmb_length]})
-		 else
-   	  	   combinations << combination.join() if combination.include?(characters.last)
-		 end
+			  	combinations << combination.join() if combination.include?(characters.last)
 	     if combination.last != characters.first
 				reverse_comb=combination.reverse 
 			    reverse_comb.pop
@@ -140,25 +136,13 @@ class PhoenixPassword
 					if  data[:type] == "unique"
 						combinations.<<("%s%s"%[reverse_comb,char])
 					elsif check_match
-						if @rules
-							combinations.<<("%s%s"%[reverse_comb,char]) if rules_pass?({:combination=>"%s%s"%[reverse_comb,char],:cmb_length=>data[:cmb_length]})
-						else
-							combinations.<<("%s%s"%[reverse_comb,char])
-						end
-					else
-						if @rules
-						  combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last && rules_pass?({:combination=>"%s%s"%[reverse_comb,char],:cmb_length=>data[:cmb_length]})
-						else
-						  combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
-						end						
+						combinations.<<("%s%s"%[reverse_comb,char])
+					else							
+					    combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
 					end
 				end
-			else
-			  if @rules
-			    combinations.<<("%s%s"%[reverse_comb,characters.last]) if rules_pass?({:combination=>"%s%s"%[reverse_comb,characters.last],:cmb_length=>data[:cmb_length]})
-			  else
-			    combinations.<<("%s%s"%[reverse_comb,characters.last])
-			  end					
+			else						
+			  combinations.<<("%s%s"%[reverse_comb,characters.last])				
 			end
 		 end
 		end
@@ -347,7 +331,7 @@ class PhoenixPassword
 	def combinations(data)
 		@type=data[:type]
 		puts "File size estimates are invalid when
-		using rules" if @rules && data[:piped]
+		using rules" if @rules && !data[:piped]
 		case data[:type]
 	  	 when "matching"
 	  	 	if data[:cmb_length].length == 1
@@ -373,5 +357,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.new({:rules=>true,:strictness=>2}).combinations({:piped=>false,:type=>'matching',
-:extra_chars=>["b"],:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[6]})
+PhoenixPassword.new({:rules=>true,:strictness=>2}).combinations({:piped=>false,:type=>'unique',
+:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[6,7]})
