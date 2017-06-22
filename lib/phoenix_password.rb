@@ -35,7 +35,9 @@ class PhoenixPassword
 		if @restore
 			 restore=@client.query("select * from checkpoint where id=1")
 			 combination=restore.to_a[0]["combination"].split('')
-			 chars_used=restore.to_a[0]["chars_used"].split('')
+			 chars_used=restore.to_a[0]["chars_used"]
+			 chars_used=chars_used.gsub(/[^0-9,]/,'')
+			 chars_used=chars_used.split(',')
 			 c=0
 			 chars_used.each do |char|
 			 	chars_used[c]=char.to_i
@@ -47,7 +49,7 @@ class PhoenixPassword
 		while i < possible_combinations/characters.length
 			if @checkpoint
 				if i == possible_combinations/(characters.length*@check_fraction)
-				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used.join()}',i=#{i} where id=1")
+				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
 				  @fh.close if @fh
 				  puts "Checkpoint set"
 				  exit
@@ -385,5 +387,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.new({:checkpoint=>true}).combinations({:piped=>false,:type=>'matching',
+PhoenixPassword.new({:restore=>true}).combinations({:piped=>false,:type=>'matching',
 :characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6]})
