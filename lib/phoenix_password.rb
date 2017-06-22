@@ -14,8 +14,10 @@ class PhoenixPassword
 		@restore=data[:restore]
 
 		if data[:checkpoint]
-			@restore_file=File.new("checkpoint","w")
-			@check_repetition=data[:check_repetition] ? data[:check_repetition] : 100000
+			require 'mysql2'
+			@client=Mysql2::Client.new({:host=>'localhost',:username=>'phoenix',
+			:password=>'Gordian100!',:database=>'phoenix_password'})
+			@check_fraction=data[:check_fraction] ? data[:check_fraction] : 10
 		end
 	end
 
@@ -32,14 +34,14 @@ class PhoenixPassword
 
 		if @restore
 		end
-		r = 0 if @restore_file
+
 		while i < possible_combinations/characters.length
-			if @restore_file
-				r +=1
-				if r == @check_repetition
- 				  @restore_file.puts(combination.join())
-				  @restore_file.puts(chars_used.join())
-				  r = 0
+			if @checkpoint
+				if i == possible_combinations/(characters.length*@check_fraction)
+				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used.join()}',i=#{i} where id=1")
+				  @fh.close if @fh
+				  puts "Checkpoint set"
+				  exit
 				end
 			end
 			x=1
@@ -371,9 +373,8 @@ class PhoenixPassword
 		 	puts "Invalid combination type"
 		 	exit
 		end
-		@restore_file.close if @checkpoint
 	end
 end
 
-PhoenixPassword.new({:rules=>true,:strictness=>2,:checkpoint=>true}).combinations({:piped=>false,:type=>'unique',
-:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[6,7]})
+PhoenixPassword.new({:checkpoint=>true}).combinations({:piped=>false,:type=>'matching',
+:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6]})
