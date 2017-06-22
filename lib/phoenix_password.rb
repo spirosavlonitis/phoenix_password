@@ -13,11 +13,11 @@ class PhoenixPassword
 		@checkpoint=data[:checkpoint]
 		@restore=data[:restore]
 
-		if data[:checkpoint]
+		if data[:checkpoint] || data[:restore]
 			require 'mysql2'
 			@client=Mysql2::Client.new({:host=>'localhost',:username=>'phoenix',
 			:password=>'Gordian100!',:database=>'phoenix_password'})
-			@check_fraction=data[:check_fraction] ? data[:check_fraction] : 10
+			@check_fraction=data[:check_fraction] ? data[:check_fraction] : 10 if data[:checkpoint]
 		end
 	end
 
@@ -33,6 +33,15 @@ class PhoenixPassword
 		chars_used=Array.new(data[:cmb_length],0)
 
 		if @restore
+			 restore=@client.query("select * from checkpoint where id=1")
+			 combination=restore.to_a[0]["combination"].split('')
+			 chars_used=restore.to_a[0]["chars_used"].split('')
+			 c=0
+			 chars_used.each do |char|
+			 	chars_used[c]=char.to_i
+			 	c+=1
+			 end
+			 i=restore.to_a[0]["i"]
 		end
 
 		while i < possible_combinations/characters.length
