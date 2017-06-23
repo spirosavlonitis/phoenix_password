@@ -60,15 +60,19 @@ class PhoenixPassword
 				if @check_cmb
 					if i == possible_combinations/(characters.length*@check_fraction) && data[:cmb_length] == @check_cmb
 					  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
-					  @fh.close if @fh
-					  puts "Checkpoint set"
+					  if !@piped
+					    @fh.close
+					    puts "Checkpoint set"
+					  end
 					  exit
 					end
 				else
 					if i == possible_combinations/(characters.length*@check_fraction)
 					  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
-					  @fh.close if @fh
-					  puts "Checkpoint set"
+					  if !@piped
+					    @fh.close
+						puts "Checkpoint set"
+					  end
 					  exit
 					end
 				end
@@ -383,6 +387,7 @@ class PhoenixPassword
 
 	def combinations(data)
 		@type=data[:type]
+		@piped=data[:piped]
 		puts "File size estimates are invalid when using rules" if @rules && !data[:piped]
 		case data[:type]
 	  	 when "matching"
@@ -409,5 +414,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.new({:restore=>true,}).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[8]})
+PhoenixPassword.new({:checkpoint=>true,:check_fraction=>2}).combinations({:piped=>true,:type=>'matching',
+:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[6]})
