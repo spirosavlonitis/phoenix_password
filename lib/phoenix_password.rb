@@ -17,7 +17,14 @@ class PhoenixPassword
 			require 'mysql2'
 			@client=Mysql2::Client.new({:host=>'localhost',:username=>'phoenix',
 			:password=>'Gordian100!',:database=>'phoenix_password'})
-			@check_fraction=data[:check_fraction] ? data[:check_fraction] : 10 if data[:checkpoint]
+			if data[:checkpoint]
+			  @check_fraction=data[:check_fraction] ? data[:check_fraction] : 10
+			  @check_cmb=data[:check_cmb]			  
+			end
+
+			if data[:restore]
+			  @restore_cmb=data[:restore_cmb]
+			end
 		end
 	end
 
@@ -48,11 +55,20 @@ class PhoenixPassword
 
 		while i < possible_combinations/characters.length
 			if @checkpoint
-				if i == possible_combinations/(characters.length*@check_fraction)
-				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
-				  @fh.close if @fh
-				  puts "Checkpoint set"
-				  exit
+				if @check_cmb
+					if i == possible_combinations/(characters.length*@check_fraction) && data[:cmb_length] == @check_cmb
+					  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+					  @fh.close if @fh
+					  puts "Checkpoint set"
+					  exit
+					end
+				else
+					if i == possible_combinations/(characters.length*@check_fraction)
+					  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+					  @fh.close if @fh
+					  puts "Checkpoint set"
+					  exit
+					end
 				end
 			end
 			x=1
@@ -345,6 +361,13 @@ class PhoenixPassword
 	def multi_length(data)
 		@cmbs_length=data[:cmb_length].length
 		dataB=data.clone
+
+		if  @restore_cmb
+			data[:cmb_length].each do |n|
+				dataB[:cmb_length].delete(n) if n < @restore_cmb
+			end
+		end
+
 		i=0
 		while i < data[:cmb_length].length
 			dataB[:cmb_length] = data[:cmb_length][i]
@@ -387,5 +410,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.new({:restore=>true}).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6]})
+PhoenixPassword.new({:restore=>true,:restore_cmb=>7}).combinations({:piped=>false,:type=>'matching',
+:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6,7]})
