@@ -232,6 +232,7 @@ class PhoenixPassword
 					@fh.puts(combination)
 				 end
 			 matching +=1
+			 puts matching
 			end
 		  end
 		 end
