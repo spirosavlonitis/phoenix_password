@@ -29,6 +29,61 @@ class PhoenixPassword
 		end
 	end
 
+
+	def set_check_point(possible_combinations,characters,cmb_length,combination,chars_used,i)
+		if @check_cmb
+			if @restore
+			       if i == (possible_combinations/(characters.length*@check_fraction))+@i && cmb_length == @check_cmb
+				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+				  if !@piped
+				    @fh.close
+				    puts "Checkpoint set"
+				  end
+				  exit
+				elsif cmb_length > @check_cmb
+				    @client.query("update checkpoint set combination='#{Array.new(cmb_length,characters.first).join()}',chars_used='#{Array.new(cmb_length,0)}',i=0 where id=1")
+					if !@piped
+						puts "#{@type} combinations of length #{@check_cmb} finished"
+					    puts "Check point set to the begining of #{cmb_length} combinations"
+					    puts "Set :restore_cmb=>#{cmb_length}"
+					    puts "If planning to use checkpoint set check_cmb=>#{cmb_length}"
+					    @fh.close
+				    end
+				    exit
+				end
+			else
+				if i == possible_combinations/(characters.length*@check_fraction) && cmb_length == @check_cmb
+				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+				  if !@piped
+				    @fh.close
+				    puts "Checkpoint set"
+				  end
+				  exit
+				end
+			end
+		else
+			if @restore
+				if i == (possible_combinations/(characters.length*@check_fraction))+@i
+				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+				  if !@piped
+				    @fh.close
+					puts "Checkpoint set"
+				  end
+				  exit
+				end
+			else
+				if i == possible_combinations/(characters.length*@check_fraction)
+				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+				  if !@piped
+				    @fh.close
+					puts "Checkpoint set"
+				  end
+				  exit
+				end
+			end
+		end
+	end
+
 	def generate_combinations(data)
 		characters=data[:characters]
 		if !data[:extra_chars].nil?
@@ -58,57 +113,7 @@ class PhoenixPassword
 
 		while i < possible_combinations/characters.length
 			if @checkpoint
-				if @check_cmb
-					if @restore
- 				       if i == (possible_combinations/(characters.length*@check_fraction))+@i && data[:cmb_length] == @check_cmb
-						  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
-						  if !@piped
-						    @fh.close
-						    puts "Checkpoint set"
-						  end
-						  exit
-						elsif data[:cmb_length] > @check_cmb
-						    @client.query("update checkpoint set combination='#{Array.new(data[:cmb_length],characters.first).join()}',chars_used='#{Array.new(data[:cmb_length],0)}',i=0 where id=1")
-							if !@piped
-								puts "#{@type} combinations of length #{@check_cmb} finished"
-							    puts "Check point set to the begining of #{data[:cmb_length]} combinations"
-							    puts "Set :restore_cmb=>#{data[:cmb_length]}"
-							    puts "If planning to use checkpoint set check_cmb=>#{data[:cmb_length]}"
-							    @fh.close
-						    end
-						    exit
-						end
-					else
-						if i == possible_combinations/(characters.length*@check_fraction) && data[:cmb_length] == @check_cmb
-						  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
-						  if !@piped
-						    @fh.close
-						    puts "Checkpoint set"
-						  end
-						  exit
-						end
-					end
-				else
-					if @restore
-						if i == (possible_combinations/(characters.length*@check_fraction))+@i
-						  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
-						  if !@piped
-						    @fh.close
-							puts "Checkpoint set"
-						  end
-						  exit
-						end
-					else
-						if i == possible_combinations/(characters.length*@check_fraction)
-						  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
-						  if !@piped
-						    @fh.close
-							puts "Checkpoint set"
-						  end
-						  exit
-						end
-					end
-				end
+			  set_check_point(possible_combinations,characters,data[:cmb_length],combination,chars_used,i)
 			end
 			x=1
 			change_count=1
@@ -443,7 +448,10 @@ class PhoenixPassword
 		 	puts "Invalid combination type"
 		 	exit
 		end
-		@fh.close if @fh
+		if !@piped
+		  puts "File created"
+		  @fh.close
+		end
 	end
 end
 
