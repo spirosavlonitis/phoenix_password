@@ -59,13 +59,34 @@ class PhoenixPassword
 		while i < possible_combinations/characters.length
 			if @checkpoint
 				if @check_cmb
-					if i == possible_combinations/(characters.length*@check_fraction) && data[:cmb_length] == @check_cmb
-					  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
-					  if !@piped
-					    @fh.close
-					    puts "Checkpoint set"
-					  end
-					  exit
+					if @restore
+ 				       if i == (possible_combinations/(characters.length*@check_fraction))+@i && data[:cmb_length] == @check_cmb
+						  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+						  if !@piped
+						    @fh.close
+						    puts "Checkpoint set"
+						  end
+						  exit
+						elsif data[:cmb_length] > @check_cmb
+						    @client.query("update checkpoint set combination='#{Array.new(data[:cmb_length],characters.first).join()}',chars_used='#{Array.new(data[:cmb_length],0)}',i=0 where id=1")
+							if !@piped
+								puts "#{@type} combinations of length #{@check_cmb} finished"
+							    puts "Check point set to the begining of #{data[:cmb_length]} combinations"
+							    puts "Set :restore_cmb=>#{data[:cmb_length]}"
+							    puts "If planning to use checkpoint set check_cmb=>#{data[:cmb_length]}"
+							    @fh.close
+						    end
+						    exit
+						end
+					else
+						if i == possible_combinations/(characters.length*@check_fraction) && data[:cmb_length] == @check_cmb
+						  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+						  if !@piped
+						    @fh.close
+						    puts "Checkpoint set"
+						  end
+						  exit
+						end
 					end
 				else
 					if @restore
@@ -377,7 +398,7 @@ class PhoenixPassword
 	def multi_length(data)
 		dataB=data.clone
 
-		if  @restore_cmb
+		if @restore_cmb && @restore
 			temp_cmbs=data[:cmb_length].clone
 			temp_cmbs.each do |n|
 				data[:cmb_length].delete(n) if n < @restore_cmb
@@ -426,5 +447,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.new(:restore=>true,:checkpoint=>true,:check_fraction=>4).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6]})
+PhoenixPassword.new(:restore=>true,:restore_cmb=>8,:checkpoint=>true,:check_cmb=>8,:check_fraction=>4).combinations({:piped=>false,:type=>'matching',
+:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6,7,8]})
