@@ -24,6 +24,7 @@ class PhoenixPassword
 
 			if data[:restore]
 			  @restore_cmb=data[:restore_cmb]
+			  @restored=false
 			end
 		end
 	end
@@ -39,7 +40,7 @@ class PhoenixPassword
 		possible_combinations=characters.length**combination_length
 		chars_used=Array.new(data[:cmb_length],0)
 
-		if @restore
+		if @restore && !@restored
 			 restore=@client.query("select * from checkpoint where id=1")
 			 combination=restore.to_a[0]["combination"].split('')
 			 chars_used=restore.to_a[0]["chars_used"]
@@ -51,6 +52,7 @@ class PhoenixPassword
 			 	c+=1
 			 end
 			 i=restore.to_a[0]["i"]
+			 @restored=true
 		end
 
 		while i < possible_combinations/characters.length
@@ -235,7 +237,6 @@ class PhoenixPassword
 			raise
 	    end while char_sum <= total_characters
 		
-		@fh.close if @fh && @cmbs_length.nil?
 		return matching
 	end
 
@@ -307,7 +308,6 @@ class PhoenixPassword
 			raise
 		end while char_sum <= total_characters
 		
-		@fh.close if @fh && @cmbs_length.nil?
 		return unique_combs
 	end
 
@@ -359,12 +359,12 @@ class PhoenixPassword
 	end
 
 	def multi_length(data)
-		@cmbs_length=data[:cmb_length].length
 		dataB=data.clone
 
 		if  @restore_cmb
-			data[:cmb_length].each do |n|
-				dataB[:cmb_length].delete(n) if n < @restore_cmb
+			temp_cmbs=data[:cmb_length].clone
+			temp_cmbs.each do |n|
+				data[:cmb_length].delete(n) if n < @restore_cmb
 			end
 		end
 
@@ -379,7 +379,6 @@ class PhoenixPassword
 			end
 			i+=1
 		end
-		@fh.close if !data[:piped]
 	end
 
 	def combinations(data)
@@ -394,7 +393,6 @@ class PhoenixPassword
 				data[:write_cmbs]=data[:cmb_length].clone
 				multi_length(data)
 	  	 	end
-
 		 when "unique"
 		 	if data[:cmb_length].length == 1
 		 		data[:cmb_length]=data[:cmb_length].first
@@ -407,8 +405,9 @@ class PhoenixPassword
 		 	puts "Invalid combination type"
 		 	exit
 		end
+		@fh.close if @fh
 	end
 end
 
-PhoenixPassword.new({:restore=>true,:restore_cmb=>7}).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6,7]})
+PhoenixPassword.new({:restore=>true,:restore_cmb=>8}).combinations({:piped=>false,:type=>'matching',
+:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6,7,8]})
