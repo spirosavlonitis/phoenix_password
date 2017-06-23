@@ -460,5 +460,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.new(:restore=>true,:checkpoint=>true,:check_fraction=>2).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[6]})
+PhoenixPassword.new(:rules=>true).combinations({:piped=>false,:type=>'matching',
+:characters=>[0,1,2,3,4,5,6,7,8,9,"a","b"],:cmb_length=>[6]})

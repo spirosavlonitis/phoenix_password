@@ -359,7 +359,7 @@ module FileSize
 		return 0
 	end
 
-	def get_default_strictness(letters,digits,cmb_length)
+	def get_strictness_one(letters,digits,cmb_length)
 		combinations=0
 		if cmb_length % 2 != 0
             ceiling=(cmb_length/2.0).ceil
@@ -369,14 +369,34 @@ module FileSize
 		if cmb_length == 6
 			combinations+=get_combinations({:characters=>digits,:cmb_length=>(cmb_length/2)})*2
 			combinations+=get_combinations({:characters=>letters,:cmb_length=>(cmb_length/2)})*2
+
 		elsif cmb_length == 7
-		    combinations+=get_combinations({:characters=>digits,:cmb_length=>ceiling})
-		    combinations+=get_combinations({:characters=>digits,:cmb_length=>floor})
-		    combinations+=get_combinations({:characters=>letters,:cmb_length=>ceiling})
-		    combinations+=get_combinations({:characters=>letters,:cmb_length=>floor})
+		    combinations+=get_combinations({:characters=>digits,:cmb_length=>floor})*2
+		    combinations+=get_combinations({:characters=>letters,:cmb_length=>ceiling})*2
 		elsif cmb_length == 8
 			combinations+=get_combinations({:characters=>digits,:cmb_length=>(cmb_length/2)})*2
 			combinations+=get_combinations({:characters=>letters,:cmb_length=>(cmb_length/2)})*2
+		elsif cmb_length == 9
+		    combinations+=get_combinations({:characters=>digits,:cmb_length=>floor})*2
+		    combinations+=get_combinations({:characters=>letters,:cmb_length=>ceiling})*2
+		elsif cmb_length == 10
+			combinations+=get_combinations({:characters=>digits,:cmb_length=>(cmb_length/2)})*2
+			combinations+=get_combinations({:characters=>letters,:cmb_length=>(cmb_length/2)})*2
+		elsif cmb_length == 11
+		    combinations+=get_combinations({:characters=>digits,:cmb_length=>floor})*2
+		    combinations+=get_combinations({:characters=>letters,:cmb_length=>ceiling})*2
+		elsif cmb_length == 12
+			combinations+=get_combinations({:characters=>digits,:cmb_length=>(cmb_length/2)})*2
+			combinations+=get_combinations({:characters=>letters,:cmb_length=>(cmb_length/2)})*2
+		elsif cmb_length == 13
+		    combinations+=get_combinations({:characters=>digits,:cmb_length=>floor})*2
+		    combinations+=get_combinations({:characters=>letters,:cmb_length=>ceiling})*2
+		elsif cmb_length == 14
+			combinations+=get_combinations({:characters=>digits,:cmb_length=>(cmb_length/2)})*2
+			combinations+=get_combinations({:characters=>letters,:cmb_length=>(cmb_length/2)})*2
+		elsif cmb_length == 15
+		    combinations+=get_combinations({:characters=>digits,:cmb_length=>floor})*2
+		    combinations+=get_combinations({:characters=>letters,:cmb_length=>ceiling})*2
 		end
 		
 		return combinations
@@ -396,7 +416,7 @@ module FileSize
 		if data[:extra_chars].nil?
 		  
 		  if letters.length > 0
-		    combinations+=get_default_strictness(letters,digits,data[:cmb_length])		  	
+		    combinations+=get_strictness_one(letters,digits,data[:cmb_length])
 		  end
 
 		  if @strictness >= 2
