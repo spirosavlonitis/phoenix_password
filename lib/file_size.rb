@@ -370,10 +370,13 @@ module FileSize
 			combinations+=get_combinations({:characters=>digits,:cmb_length=>(cmb_length/2)})*2
 			combinations+=get_combinations({:characters=>letters,:cmb_length=>(cmb_length/2)})*2
 		elsif cmb_length == 7
-		    combinations+=get_combinations({:characters=>digits,:cmb_length=>ceiling})*2			
-		    combinations+=get_combinations({:characters=>digits,:cmb_length=>floor})*2
-		    combinations+=get_combinations({:characters=>letters,:cmb_length=>ceiling})*2
-		    combinations+=get_combinations({:characters=>letters,:cmb_length=>floor})*2
+		    combinations+=get_combinations({:characters=>digits,:cmb_length=>ceiling})
+		    combinations+=get_combinations({:characters=>digits,:cmb_length=>floor})
+		    combinations+=get_combinations({:characters=>letters,:cmb_length=>ceiling})
+		    combinations+=get_combinations({:characters=>letters,:cmb_length=>floor})
+		elsif cmb_length == 8
+			combinations+=get_combinations({:characters=>digits,:cmb_length=>(cmb_length/2)})*2
+			combinations+=get_combinations({:characters=>letters,:cmb_length=>(cmb_length/2)})*2
 		end
 		
 		return combinations
