@@ -365,6 +365,8 @@ module FileSize
 		if cmb_length == 6
 			combinations+=get_combinations({:characters=>digits,:cmb_length=>(cmb_length/2)})*2
 			combinations+=get_combinations({:characters=>letters,:cmb_length=>(cmb_length/2)})*2
+		elsif cmb_length == 7
+
 		end
 		
 		return combinations
@@ -375,15 +377,17 @@ module FileSize
 		digits=characters.scan(/[0-9]/)
 	
 		if data[:cap_limit]
-			letters=characters.scan(/[a-z]/i)		
+			letters=characters.scan(/[a-z]/i)
 		else
 			letters=characters.scan(/[A-Z]/i)
 		end
 
 		combinations=0
 		if data[:extra_chars].nil?
-
-		  combinations+=get_default_strictness(letters,digits,data[:cmb_length])
+		  
+		  if letters.length > 0
+		    combinations+=get_default_strictness(letters,digits,data[:cmb_length])		  	
+		  end
 
 		  if @strictness >= 2
 			  combinations +=get_combinations({:cmb_length=>data[:cmb_length],
