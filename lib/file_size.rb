@@ -361,12 +361,19 @@ module FileSize
 
 	def get_default_strictness(letters,digits,cmb_length)
 		combinations=0
+		if cmb_length % 2 != 0
+            ceiling=(cmb_length/2.0).ceil
+            floor=(cmb_length/2.0).floor
+		end
 
 		if cmb_length == 6
 			combinations+=get_combinations({:characters=>digits,:cmb_length=>(cmb_length/2)})*2
 			combinations+=get_combinations({:characters=>letters,:cmb_length=>(cmb_length/2)})*2
 		elsif cmb_length == 7
-
+		    combinations+=get_combinations({:characters=>digits,:cmb_length=>ceiling})*2			
+		    combinations+=get_combinations({:characters=>digits,:cmb_length=>floor})*2
+		    combinations+=get_combinations({:characters=>letters,:cmb_length=>ceiling})*2
+		    combinations+=get_combinations({:characters=>letters,:cmb_length=>floor})*2
 		end
 		
 		return combinations
