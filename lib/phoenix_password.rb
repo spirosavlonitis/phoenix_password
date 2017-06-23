@@ -35,6 +35,7 @@ class PhoenixPassword
 			if @restore
 			       if i == (possible_combinations/(characters.length*@check_fraction))+@i && cmb_length == @check_cmb
 				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+				  @client.close
 				  if !@piped
 				    @fh.close
 				    puts "Checkpoint set"
@@ -42,6 +43,7 @@ class PhoenixPassword
 				  exit
 				elsif cmb_length > @check_cmb
 				    @client.query("update checkpoint set combination='#{Array.new(cmb_length,characters.first).join()}',chars_used='#{Array.new(cmb_length,0)}',i=0 where id=1")
+				    @client.close
 					if !@piped
 						puts "#{@type} combinations of length #{@check_cmb} finished"
 					    puts "Check point set to the begining of #{cmb_length} combinations"
@@ -54,6 +56,7 @@ class PhoenixPassword
 			else
 				if i == possible_combinations/(characters.length*@check_fraction) && cmb_length == @check_cmb
 				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+				  @client.close
 				  if !@piped
 				    @fh.close
 				    puts "Checkpoint set"
@@ -65,6 +68,7 @@ class PhoenixPassword
 			if @restore
 				if i == (possible_combinations/(characters.length*@check_fraction))+@i
 				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+				  @client.close				  
 				  if !@piped
 				    @fh.close
 					puts "Checkpoint set"
@@ -74,6 +78,7 @@ class PhoenixPassword
 			else
 				if i == possible_combinations/(characters.length*@check_fraction)
 				  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+				  @client.close				  
 				  if !@piped
 				    @fh.close
 					puts "Checkpoint set"
@@ -456,4 +461,4 @@ class PhoenixPassword
 end
 
 PhoenixPassword.new(:restore=>true,:checkpoint=>true,:check_fraction=>2).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9,"a","b"],:cmb_length=>[6]})
+:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[6]})
