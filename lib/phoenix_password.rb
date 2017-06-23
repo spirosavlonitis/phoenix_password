@@ -52,6 +52,7 @@ class PhoenixPassword
 			 	c+=1
 			 end
 			 i=restore.to_a[0]["i"]
+			 @i=i
 			 @restored=true
 		end
 
@@ -67,13 +68,24 @@ class PhoenixPassword
 					  exit
 					end
 				else
-					if i == possible_combinations/(characters.length*@check_fraction)
-					  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
-					  if !@piped
-					    @fh.close
-						puts "Checkpoint set"
-					  end
-					  exit
+					if @restore
+						if i == (possible_combinations/(characters.length*@check_fraction))+@i
+						  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+						  if !@piped
+						    @fh.close
+							puts "Checkpoint set"
+						  end
+						  exit
+						end
+					else
+						if i == possible_combinations/(characters.length*@check_fraction)
+						  @client.query("update checkpoint set combination='#{combination.join()}',chars_used='#{chars_used}',i=#{i} where id=1")
+						  if !@piped
+						    @fh.close
+							puts "Checkpoint set"
+						  end
+						  exit
+						end
 					end
 				end
 			end
@@ -414,5 +426,5 @@ class PhoenixPassword
 	end
 end
 
-PhoenixPassword.new(:rules=>true).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9,"a"],:cmb_length=>[8]})
+PhoenixPassword.new(:restore=>true,:checkpoint=>true,:check_fraction=>4).combinations({:piped=>false,:type=>'matching',
+:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6]})
