@@ -127,7 +127,9 @@ You can customize the setting if you want but you must change the phoenix_passwo
 ```ruby
 PhoenixPassword.new({:checkpoint=>true,:check_fraction=>2,:check_cmb=>7})
 ```
-check_cmb is to be used when you want to set a checkpoint in a specific combination length when generating multiple length combinations.
+check_cmb:
+
+Is to be used when you want to set a checkpoint in a specific combination length when generating multiple length combinations.
 Example:
  
 
@@ -136,7 +138,9 @@ PhoenixPassword.new(:checkpoint=>true,:check_cmb=>7,:check_fraction=>4).combinat
 :characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6,7,8]})
 ```
 
-check_fraction is also optional if not set it's by default set to 2 meaning 1/2 of the total combinations.You can set it to a greater value if you want to create checkpoint sooner, a vale of 4 will mean that when about 1/4 of the total combinations is tested a checkpoint is set and the program exits.I recommend that you use even numbers as a check_fraction value.
+check_fraction:
+
+Is optional if not set it's by default set to 2 meaning 1/2 of the total combinations.You can set it to a greater value if you want to create checkpoint sooner, a vale of 4 will mean that when about 1/4 of the total combinations is tested a checkpoint is set and the program exits.I recommend that you use even numbers as a check_fraction value.
 
 If you are dealing with an odd number of total combinations say 11**6=1771561 using the 2 fraction will result in you having to do three iterations of the program before you get the full amount of combinations:
 
@@ -151,7 +155,10 @@ PhoenixPassword.new(:restore=>true,:restore_cmb=>7)
 
 PhoenixPassword.new(:restore=>true,:restore_cmb=>7,:checkpoint=>true,:check_cmb=>7,:check_fraction=>4)
 ```
-restore_cmb is to be used when restoring from a multiple combinanation process.In the previous example in order to do a proper restore you must set restore_cmb=>7 as that will discard all of the 6 length combinations.
+
+In order to restore you must use the same file name as when the checkpoint was set,since the new combinations will be appended to it.
+
+restore_cmb is to be used when restoring from a multiple combination process.In the previous example in order to do a proper restore you must set restore_cmb=>7 as that will discard all of the 6 length combinations.
 
 You can use restore and checkpoint at the same time resulting in resuming from where you left off and creating a new checkpoint when the check_fraction is met here is an example:
 
@@ -171,7 +178,7 @@ PhoenixPassword.new(:checkpoint=>true,:check_cmb=>7,:check_fraction=>4)
 PhoenixPassword.new(:restore=>true,:restore_cmb=>7,:checkpoint=>true,:check_cmb=>7,:check_fraction=>4)
 ```
 
-If you continue to restore you will be notified when all the combinations have been generated and how to change to the next combination length
+If you continue to restore you will be notified when all the combinations have been generated and how to change to the next combination length.
 
 ==================================================================================================
 
