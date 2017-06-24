@@ -119,7 +119,7 @@ c)Create a checkpoint table in the phoenix_password database as follows
 
 create table checkpoint ( id int not null auto_increment primary key,combination varchar(200) not null,chars_used varchar(255) not null,i bigint unsigned not null);
 
-You can customize the setting if you want but you must change the phoenix_password.rb file accordingly.
+You can customize the settings if you want but you must change the phoenix_password.rb file accordingly.
 
 
 **Checkpoint**
@@ -142,10 +142,12 @@ check_fraction:
 
 Is optional if not set it's by default set to 2 meaning 1/2 of the total combinations.You can set it to a greater value if you want to create checkpoint sooner, a vale of 4 will mean that when about 1/4 of the total combinations is tested a checkpoint is set and the program exits.I recommend that you use even numbers as a check_fraction value.
 
-If you are dealing with an odd number of total combinations say 11**6=1771561 using the 2 fraction will result in you having to do three iterations of the program before you get the full amount of combinations:
+If you are dealing with an odd number of total combinations say 11^6=1771561 using the 2 fraction will result in you having to do three iterations of the program before you get the full amount of combinations:
 
-1)1771561/2=885780,5 rounded to_i 885780 = %49.99
-2)1771561/2=885780,5 rounded to_i 885780 = %49.99
+1)1771561/2=885780,5 rounded to_i 885780 =  %49.99
+
+2)1771561/2=885780,5 rounded to_i 885780 =  %49.99
+
 3)1771561-1771560=1 1/1771561 = %0.000000564
 
 **Restore**
@@ -158,7 +160,9 @@ PhoenixPassword.new(:restore=>true,:restore_cmb=>7,:checkpoint=>true,:check_cmb=
 
 In order to restore you must use the same file name as when the checkpoint was set,since the new combinations will be appended to it.
 
-restore_cmb is to be used when restoring from a multiple combination process.In the previous example in order to do a proper restore you must set restore_cmb=>7 as that will discard all of the 6 length combinations.
+restore_cmb:
+
+Is to be used when restoring from a multiple combination process.In the previous example in order to do a proper restore you must set restore_cmb=>7 as that will discard all of the 6 length combinations.
 
 You can use restore and checkpoint at the same time resulting in resuming from where you left off and creating a new checkpoint when the check_fraction is met here is an example:
 
