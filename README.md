@@ -153,7 +153,9 @@ If you are dealing with an odd number of total combinations say 11^6=1771561 usi
 **Restore**
 
 ```ruby
-PhoenixPassword.new(:restore=>true,:restore_cmb=>7)
+PhoenixPassword.new(:restore=>true)
+
+PhoenixPassword.new(:restore=>true,:checkpoint=>true,:check_fraction=>4)
 
 PhoenixPassword.new(:restore=>true,:restore_cmb=>7,:checkpoint=>true,:check_cmb=>7,:check_fraction=>4)
 ```
