@@ -119,6 +119,11 @@ c)Create a checkpoint table in the phoenix_password database as follows
 
 create table checkpoint ( id int not null auto_increment primary key,combination varchar(200) not null,chars_used varchar(255) not null,i bigint unsigned not null);
 
+d)Insert a row in the checkpoint table
+
+insert into checkpoint (combination,chars_used,i) values ('000000','00000',0);
+
+
 You can customize the settings if you want but you must change the phoenix_password.rb file accordingly.
 
 
