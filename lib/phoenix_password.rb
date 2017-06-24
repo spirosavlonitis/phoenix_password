@@ -18,7 +18,7 @@ class PhoenixPassword
 			@client=Mysql2::Client.new({:host=>'localhost',:username=>'phoenix',
 			:password=>'Gordian100!',:database=>'phoenix_password'})
 			if data[:checkpoint]
-			  @check_fraction=data[:check_fraction] ? data[:check_fraction] : 10
+			  @check_fraction=data[:check_fraction] ? data[:check_fraction] : 2
 			  @check_cmb=data[:check_cmb]			  
 			end
 
@@ -454,11 +454,9 @@ class PhoenixPassword
 		 	exit
 		end
 		if !@piped
-		  puts "File created"
 		  @fh.close
+		  @client.close if @client
+		  puts "File created"
 		end
 	end
 end
-
-PhoenixPassword.new(:rules=>true).combinations({:piped=>false,:type=>'matching',
-:characters=>[0,1,2,3,4,5,6,7,8,9,"a","b"],:cmb_length=>[6]})

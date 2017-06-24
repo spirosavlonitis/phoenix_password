@@ -99,6 +99,83 @@ If you want to use your own combination filtering rules you must use the own_rul
 The rules that you will add will be implemented after all the rules that are used by the strictness level have been checked.Make sure when using your rules that you don't filter twice things that have been already checked.
 
 ==================================================================================================
+
+**Checkpoint and Restore**
+
+In order to be able to use the checkpoint functionality it is required that you have mysql
+database and mysql2 gem installed.
+
+If don't want to change the settings that are provided by default, you will have to do the following steps in you database:
+
+a)Create a database called phoenix_password
+
+create database phoenix_password
+
+b)Grant all privileges on that database to a user named phoenix,with the password Gordian100!
+
+grant all privileges on phoenix_password.* to 'phoenix'@'localhost' identified by 'Gordian100!';
+
+c)Create a checkpoint table in the phoenix_password database as follows
+
+create table checkpoint ( id int not null auto_increment primary key,combination varchar(200) not null,chars_used varchar(255) not null,i bigint unsigned not null);
+
+You can customize the setting if you want but you must change the phoenix_password.rb file accordingly.
+
+
+**Checkpoint**
+
+```ruby
+PhoenixPassword.new({:checkpoint=>true,:check_fraction=>2,:check_cmb=>7})
+```
+check_cmb is to be used when you want to set a checkpoint in a specific combination length when generating multiple length combinations.
+Example:
+ 
+
+```ruby
+PhoenixPassword.new(:checkpoint=>true,:check_cmb=>7,:check_fraction=>4).combinations({:piped=>false,:type=>'matching',
+:characters=>[0,1,2,3,4,5,6,7,8,9],:cmb_length=>[6,7,8]})
+```
+
+check_fraction is also optional if not set it's by default set to 2 meaning 1/2 of the total combinations.You can set it to a greater value if you want to create checkpoint sooner, a vale of 4 will mean that when about 1/4 of the total combinations is tested a checkpoint is set and the program exits.I recommend that you use even numbers as a check_fraction value.
+
+If you are dealing with an odd number of total combinations say 11**6=1771561 using the 2 fraction will result in you having to do three iterations of the program before you get the full amount of combinations:
+
+1)1771561/2=885780,5 rounded to_i 885780 = %49.99
+2)1771561/2=885780,5 rounded to_i 885780 = %49.99
+3)1771561-1771560=1 1/1771561 = %0.000000564
+
+**Restore**
+
+```ruby
+PhoenixPassword.new(:restore=>true,:restore_cmb=>7)
+
+PhoenixPassword.new(:restore=>true,:restore_cmb=>7,:checkpoint=>true,:check_cmb=>7,:check_fraction=>4)
+```
+restore_cmb is to be used when restoring from a multiple combinanation process.In the previous example in order to do a proper restore you must set restore_cmb=>7 as that will discard all of the 6 length combinations.
+
+You can use restore and checkpoint at the same time resulting in resuming from where you left off and creating a new checkpoint when the check_fraction is met here is an example:
+
+```ruby
+PhoenixPassword.new(:checkpoint=>true,:check_cmb=>7,:check_fraction=>4)
+
+PhoenixPassword.new(:restore=>true,:checkpoint=>true,:check_fraction=>4)
+```
+
+When operation has finished you should have about 2/4 of the total combinations.
+
+You can restore and set checkpoint in a multi combination as well.
+
+```ruby
+PhoenixPassword.new(:checkpoint=>true,:check_cmb=>7,:check_fraction=>4)
+
+PhoenixPassword.new(:restore=>true,:restore_cmb=>7,:checkpoint=>true,:check_cmb=>7,:check_fraction=>4)
+```
+
+If you continue to restore you will be notified when all the combinations have been generated and how to change to the next combination length
+
+==================================================================================================
+
+
 ```ruby	
 :piped=>(true or false)
 ```
