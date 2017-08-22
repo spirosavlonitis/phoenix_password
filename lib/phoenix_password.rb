@@ -292,7 +292,6 @@ class PhoenixPassword
 		return combinations
 	end
 	
-	#Added for all
 	def all_combinations(info)
 		data={:characters=>info[:characters],:cmb_length=>info[:cmb_length],:type=>info[:type]}
 	    unless info[:extra_chars].nil?
@@ -329,7 +328,6 @@ class PhoenixPassword
 		rescue => e
 			raise
 	    end while char_sum <= total_characters
-		puts all
 		return all
 	end	
 	def matching_combinations(info)
@@ -507,9 +505,11 @@ class PhoenixPassword
 			dataB[:cmb_length] = data[:cmb_length][i]
 			dataB[:characters]=data[:characters].clone
 			if data[:type] == 'unique'
-			 unique_combinations(dataB)
+			   unique_combinations(dataB)
 			elsif data[:type] == 'matching'
-			 matching_combinations(dataB)
+			   matching_combinations(dataB)
+			elsif @type == 'all'
+			   all_combinations(dataB)
 			end
 			i+=1
 		end
@@ -541,7 +541,8 @@ class PhoenixPassword
 		 		data[:cmb_length]=data[:cmb_length].first
 		 		all_combinations(data)
 		 	else
-		 	
+				data[:write_cmbs]=data[:cmb_length].clone
+				multi_length(data)
 		 	end
 		 else
 		 	puts "Invalid combination type"

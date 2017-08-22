@@ -357,7 +357,6 @@ module FileSize
 		else
 			if data[:extra_chars]
 			   remainder = (base ** data[:cmb_length]).-(old_base**data[:cmb_length])
-			   puts remainder,"here"
 			   return remainder
 			else
 			   return base ** data[:cmb_length]	
@@ -487,7 +486,11 @@ module FileSize
 					end
 				end
 			end
-			puts "Possible  #{data[:type]} combinations #{poss_combs}."
+			if data[:type] == 'all'
+ 			  puts "All possible  combinations #{poss_combs}."
+			else
+			  puts "Possible  #{data[:type]} combinations #{poss_combs}."
+			end
 			size_string="File size:"
 			file_size.each do |key,value|
 				next if value == 0
