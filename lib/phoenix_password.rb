@@ -89,6 +89,54 @@ class PhoenixPassword
 		end
 	end
 
+	#Added for all
+	def add_all_combinations(data)
+
+		combinations=[]
+		combination=data[:combination]
+		characters=data[:characters]
+		if data[:extra_chars].nil? || data[:iteration] == 0
+		 	combinations.<<(combination.join())
+		 if combination.last != characters.first
+			reverse_comb=combination.reverse
+		    combinations.<<(reverse_comb.join())
+
+			reverse_comb.pop
+			reverse_compare=reverse_comb
+			reverse_comb=reverse_comb.join()
+			characters.each do |char|
+			   next if char == characters.first
+ 			   combinations.<<("%s%s"%[reverse_comb,char])
+
+			end
+		 end
+
+		else
+			  	combinations << combination.join() if combination.include?(characters.last)
+	     if combination.last != characters.first
+				reverse_comb=combination.reverse 
+			    reverse_comb.pop
+			    reverse_compare=reverse_comb
+			    reverse_comb=reverse_comb.join
+			if reverse_comb.include?(characters.last)
+	        	check_match= matching_check({:combination=>reverse_comb,:match_limit=>data[:match_limit],:cap_limit=>data[:cap_limit]}) if data[:type] == 'matching'
+				characters.each do |char|
+					if  data[:type] == "unique"
+						combinations.<<("%s%s"%[reverse_comb,char])
+					elsif check_match
+						combinations.<<("%s%s"%[reverse_comb,char])
+					else							
+					    combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
+					end
+				end
+			else						
+			  combinations.<<("%s%s"%[reverse_comb,characters.last])				
+			end
+		 end
+		end
+		return combinations
+	end
+
 	def generate_combinations(data)
 		characters=data[:characters]
 		if !data[:extra_chars].nil?
@@ -141,9 +189,15 @@ class PhoenixPassword
 				y+=1
 			end
 
-			combinations=add_combinations({:combination=>combination,:extra_chars=>data[:extra_chars],
-			:characters=>characters,:cmb_length=>data[:cmb_length],:type=>data[:type]})
-			yield(combinations) if combinations.length >= 1
+			if @type == 'all'
+				yield(add_all_combinations({:combination=>combination,:extra_chars=>data[:extra_chars],
+				:characters=>characters,:cmb_length=>data[:cmb_length]}))
+			else
+				combinations=add_combinations({:combination=>combination,:extra_chars=>data[:extra_chars],
+				:characters=>characters,:cmb_length=>data[:cmb_length],:type=>data[:type]})
+				yield(combinations) if combinations.length >= 1
+			end
+
 
 			z=combination_length-1
 			while 1 < z
@@ -245,6 +299,46 @@ class PhoenixPassword
 		return combinations
 	end
 	
+	#Added for all
+	def all_combinations(info)
+		data={:characters=>info[:characters],:cmb_length=>info[:cmb_length],:type=>info[:type]}
+	    unless info[:extra_chars].nil?
+	   	 	 data[:extra_chars]=info[:extra_chars]
+	    end
+
+	    #create_file(info) if !info[:piped] && @fh.nil?
+
+		char_sum=data[:characters].length
+		total_characters=data[:characters].length
+		unless data[:extra_chars].nil?
+			total_characters=data[:characters].length+data[:extra_chars].length
+			data[:iteration]=0
+			if info[:skip_first] || !info[:piped]
+				data[:iteration] +=1
+				char_sum +=1
+			end
+		end
+		
+		all=0
+		begin
+		 generate_combinations(data) do |combinations|
+		  combinations.each do |combination|
+			 if info[:piped]
+				puts combination
+			 else
+				@fh.puts(combination)
+			 end
+			 all +=1
+		  end
+		 end
+			data[:iteration]+=1 unless data[:iteration].nil?
+			char_sum +=1
+		rescue => e
+			raise
+	    end while char_sum <= total_characters
+		puts all
+		return all
+	end	
 	def matching_combinations(info)
 		data={:characters=>info[:characters],:cmb_length=>info[:cmb_length],:type=>info[:type]}
 	    unless info[:extra_chars].nil?
@@ -448,6 +542,13 @@ class PhoenixPassword
 		 	else
 				data[:write_cmbs]=data[:cmb_length].clone
 				multi_length(data)
+		 	end
+		 when "all"
+		 	if data[:cmb_length].length == 1
+		 		data[:cmb_length]=data[:cmb_length].first
+		 		all_combinations(data)
+		 	else
+		 	
 		 	end
 		 else
 		 	puts "Invalid combination type"
