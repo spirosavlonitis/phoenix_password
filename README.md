@@ -220,11 +220,12 @@ Set extra characters to be used one at a time if the initial characters,minimum 
 Note that when etxra_chars are used only combinations that include them will be written to file.
 	
 ```ruby
-:type=>("matching" or "unique")
+:type=>("matching","unique","all")
 ```
 Sets which type of combinations to be generated.
 Matching: Characters repeating them selves any number of times xx or xxx
 Unique:Characters are different in every position xz or xzx
+All: Creates all possible combinations, note that you can't use any rules when using "all".
 
 ```ruby
 :match_limit=> 2 (:optional)
