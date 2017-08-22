@@ -1,6 +1,5 @@
 module FileSize
 
-
 	def get_size(data)
 		bytes=data[:combinations]*(data[:cmb_length]+1)
 		kilo_bytes=bytes/1000.0
@@ -352,9 +351,17 @@ module FileSize
 				   return (possible_combinations-matches)-single_combs
 			   end
 			end
-		else
+		elsif data[:type]=='matching'
 			return matches-old_matches  if !data[:extra_chars].nil?
 			return matches
+		else
+			if data[:extra_chars]
+			   remainder = (base ** data[:cmb_length]).-(old_base**data[:cmb_length])
+			   puts remainder,"here"
+			   return remainder
+			else
+			   return base ** data[:cmb_length]	
+			end
 		end
 		return 0
 	end

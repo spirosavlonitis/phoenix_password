@@ -112,25 +112,18 @@ class PhoenixPassword
 		 end
 
 		else
-			  	combinations << combination.join() if combination.include?(characters.last)
+		 combinations << combination.join() if combination.include?(characters.last)
 	     if combination.last != characters.first
 				reverse_comb=combination.reverse 
 			    reverse_comb.pop
 			    reverse_compare=reverse_comb
 			    reverse_comb=reverse_comb.join
 			if reverse_comb.include?(characters.last)
-	        	check_match= matching_check({:combination=>reverse_comb,:match_limit=>data[:match_limit],:cap_limit=>data[:cap_limit]}) if data[:type] == 'matching'
 				characters.each do |char|
-					if  data[:type] == "unique"
-						combinations.<<("%s%s"%[reverse_comb,char])
-					elsif check_match
-						combinations.<<("%s%s"%[reverse_comb,char])
-					else							
-					    combinations.<<("%s%s"%[reverse_comb,char]) if char == reverse_compare.last
-					end
+					combinations.<<("%s%s"%[reverse_comb,char])
 				end
 			else						
-			  combinations.<<("%s%s"%[reverse_comb,characters.last])				
+ 			    combinations.<<("%s%s"%[reverse_comb,characters.last])
 			end
 		 end
 		end
@@ -306,7 +299,7 @@ class PhoenixPassword
 	   	 	 data[:extra_chars]=info[:extra_chars]
 	    end
 
-	    #create_file(info) if !info[:piped] && @fh.nil?
+	    create_file(info) if !info[:piped] && @fh.nil?
 
 		char_sum=data[:characters].length
 		total_characters=data[:characters].length
