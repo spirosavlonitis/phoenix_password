@@ -4,6 +4,8 @@ The PhoenixPassword generator gem is intended to be used
 in password recovery operations or random password generation
 purposes.
 
+You can also use the [godian](https://github.com/spirosavlonitis/gordian) generator written in C.
+
 ## Installation
 
 Add this line to your application's Gemfile:
